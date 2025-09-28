@@ -39,8 +39,9 @@ function Account() {
   }, [currentUser]);
 
   let role
-  let isAdmin
-  let isTeacher
+  let isAdmin = false
+  let isTeacher = false
+  let isStudent = false
 
   if(user && user.role == 'teacher'){
     role = 'Преподаватель'
@@ -55,19 +56,23 @@ function Account() {
   if(!user){
     isAdmin = false
     isTeacher = false
+    isStudent = false
   }
   else{
     if(user.role == 'admin'){
       isAdmin = true
       isTeacher = false
+      isStudent = false
     }
     else if(user.role == 'teacher'){
       isAdmin = false
       isTeacher = true
+      isStudent = false
     }
     else{
       isAdmin = false
       isTeacher = false
+      isStudent = true
     }
   }
 
@@ -153,7 +158,7 @@ function Account() {
             </button>
           </form>
         </section>
-
+        {isTeacher||isStudent?
         <section className="user-courses">
           <h2>Мои курсы</h2>
           {myCourses && myCourses.length > 0 ? (
@@ -176,10 +181,10 @@ function Account() {
           ) : (
             <p>У вас пока нет активных курсов</p>
           )}
-        </section>
+        </section>:<div/>}
         
         {isAdmin ? (
-          <section className="courses-section">
+          <section className="user-courses">
             <div className="container">
               <h2>Админская тема</h2>
               <div className="courses-grid">

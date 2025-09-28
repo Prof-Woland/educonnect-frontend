@@ -16,6 +16,7 @@ const Home = () => {
   let isNotEmptyOwn = true
   let isAdmin = false
   let isTeacher = false
+  let isStudent = false
 
   useEffect(() => {
     async function fetchCourses() {
@@ -66,19 +67,23 @@ const Home = () => {
     if(!user){
       isAdmin = false
       isTeacher = false
+      isStudent = false
     }
     else{
       if(user.role == 'admin'){
         isAdmin = true
         isTeacher = false
+        isStudent = false
       }
       else if(user.role == 'teacher'){
         isAdmin = false
         isTeacher = true
+        isStudent = false
       }
       else{
         isAdmin = false
         isTeacher = false
+        isStudent = true
       }
     }
   }catch{}
@@ -102,7 +107,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+      {isTeacher||isStudent?
       <section className="courses-section">
         <div className="container">
           <h2>Мои курсы</h2>
@@ -112,7 +117,7 @@ const Home = () => {
             )) : <div className='course-none-own'>Войдите в личный кабинет, чтобы увидеть этот раздел!</div>}
           </div>
         </div>
-      </section>
+      </section>:<div/>}
       {isAdmin?
       <section className="courses-section">
         <div className="container">
