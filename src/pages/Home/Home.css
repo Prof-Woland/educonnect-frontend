@@ -1,0 +1,64 @@
+/* src/pages/Home.css */
+.hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: white;
+  padding: 100px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.course-none{
+  color: #1e3a8a;
+}
+
+.course-none-own{
+  color: #1e3a8a;
+  font-size: 18px;
+  font-weight:500;
+  width: 200%;
+}
+
+
+.courses-section {
+  padding: 50px 0;
+  width: 100%;
+}
+
+.courses-section h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+  text-align: center;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 1200px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero {
+    padding: 60px 0;
+  }
+  
+  .hero h1 {
+    font-size: 28px;
+  }
+}

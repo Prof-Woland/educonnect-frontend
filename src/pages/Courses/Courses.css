@@ -1,0 +1,74 @@
+/* src/pages/Courses.css */
+.courses-page {
+  padding: 40px 0;
+  width: 100%;
+}
+
+.courses-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.courses-header h1 {
+  font-size: 36px;
+  color: #1e3a8a;
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+}
+
+.empty{
+  margin-top: 150px;
+  margin-bottom: 170px;
+  color: black;
+}
+
+.controls input {
+  padding: 12px 16px;
+  border: 2px solid #93c5fd;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 300px;
+}
+
+.search-input{
+  background-color: white;
+  color: black;
+}
+
+.controls select {
+  padding: 12px 16px;
+  border: 2px solid #93c5fd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  color: #1e3a8a;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .courses-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .controls {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .controls input {
+    width: 100%;
+  }
+}

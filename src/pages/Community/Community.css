@@ -1,0 +1,80 @@
+/* src/pages/Community.css */
+.community {
+  padding: 40px 0;
+}
+
+.community h1 {
+  font-size: 36px;
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.community-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+}
+
+.forum-preview, .events {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.forum-preview h2, .events h2 {
+  font-size: 24px;
+  color: #1e3a8a;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #93c5fd;
+}
+
+/* Стили для элементов форума */
+.discussion-item {
+  padding: 20px;
+  margin-bottom: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.discussion-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+
+.discussion-meta {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Стили для событий */
+.event-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #f0f9ff;
+  border-radius: 8px;
+}
+
+.event-date {
+  font-weight: bold;
+  color: #1e3a8a;
+  font-size: 14px;
+}
+
+.event-title {
+  font-size: 16px;
+  color: #1e3a8a;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .community-content {
+    grid-template-columns: 1fr;
+  }
+}

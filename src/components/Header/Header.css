@@ -1,0 +1,87 @@
+/* src/components/Header.css */
+.header {
+  background: #1e3a8a;
+  padding: 20px 0;
+  width: 100vw;
+  z-index: 999;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1416px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+}
+
+nav {
+  display: flex;
+  gap: 30px;
+}
+
+/* Дополнение к src/components/Header.css */
+.logout-button {
+  margin-top: -2px;
+  background: none;
+  border: 1px solid #93c5fd;
+  color: #93c5fd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.logout-button:hover {
+  background: #93c5fd;
+  color: white;
+}
+
+nav a {
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: white;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: #1e3a8a;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  nav {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
