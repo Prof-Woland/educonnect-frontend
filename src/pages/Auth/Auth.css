@@ -96,3 +96,92 @@
   margin-bottom: 20px;
   text-align: center;
 }
+
+/* Адаптив для формы авторизации */
+@media (max-width: 768px) {
+  .auth-page {
+    padding: 40px 0;
+    min-height: 60vh;
+  }
+
+  .auth-form-container {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+    padding: 30px 25px;
+    margin: 0 15px;
+  }
+
+  .auth-form h2 {
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  .form-group input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 20px 0;
+    min-height: 50vh;
+  }
+
+  .auth-form-container {
+    padding: 25px 20px;
+    margin: 0 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .auth-form h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group input {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+
+  .auth-button {
+    padding: 12px;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .auth-link {
+    font-size: 14px;
+  }
+
+  .error-message {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-form-container {
+    padding: 20px 15px;
+  }
+
+  .auth-form h2 {
+    font-size: 20px;
+  }
+
+  .form-group input {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .auth-button {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
