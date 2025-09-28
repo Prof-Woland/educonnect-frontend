@@ -134,7 +134,7 @@ async function getPopular(){
   // if(!cookieData)
   // {
   try {
-    const response = await fetch('http://localhost:3000/courses/popular', {
+    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/popular', {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -173,7 +173,7 @@ async function getOwn(){
     const token = JSON.parse(Cookies.get('token'));
     const userData = JSON.parse(Cookies.get('user'));
     try {
-      const response = await fetch('http://localhost:3000/courses/own', {
+      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
         method: 'GET',
         credentials: 'include',
         headers: {
