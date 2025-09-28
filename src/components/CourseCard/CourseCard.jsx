@@ -9,7 +9,7 @@ function CourseCard(props) {
   const navigate = useNavigate();
   const uri = '../../../default.jpg'
   let isAuth = false
-  let user, token
+  let user, token, level, cost
   try{
     user = JSON.parse(Cookies.get('user'))
     token = JSON.parse(Cookies.get('token'))
@@ -31,6 +31,17 @@ function CourseCard(props) {
     }else{
       navigate('login')
     }
+  }
+
+  if(props.course.level == 'easy'){
+    level = "Легкий"
+  }
+  else if(props.course.level == 'medium'){
+    level = "Средний"
+  }else if(props.course.level == 'hard'){
+    level = "Тяжелый"
+  }else{
+    level = "Неизвестно"
   }
 
     async function recording(id, token, name) {
@@ -78,7 +89,7 @@ function CourseCard(props) {
     <div className="course-card" onClick={handleCardClick}>
       <div className="course-image-card">
         <img src={uri} alt={props.course.name} />
-        <div className="course-level-card">{props.course.level}</div>
+        <div className="course-level-card">{level}</div>
       </div>
       <div className="course-content-card">
         <h3>{props.course.name}</h3>
