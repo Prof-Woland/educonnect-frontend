@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 
 function CourseCard(props) {
   const navigate = useNavigate();
-  const uri = '../../../public/default.jpg'
+  const uri = '../../../default.jpg'
   let isAuth = false
   let user, token
   try{

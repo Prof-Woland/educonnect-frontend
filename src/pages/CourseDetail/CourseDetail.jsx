@@ -13,7 +13,7 @@ function CourseDetail(props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [course, setCourse] = useState(null);
-  const uri = '../../../public/default.jpg'
+  const uri = '../../../default.jpg'
   let user, token;
   let isAuth = false;
 
