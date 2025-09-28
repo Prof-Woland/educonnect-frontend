@@ -25,7 +25,7 @@ function Header() {
       <div className="container">
         <div className="header-content">
           <Link to="/" className="logo">
-            <img src="../../../public/vite.svg" alt="EduConnect" />
+            <img src="../../../vite.svg" alt="EduConnect" />
             <span>EduConnect</span>
           </Link>
           <nav>

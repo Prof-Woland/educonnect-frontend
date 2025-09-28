@@ -28,7 +28,7 @@ function Account() {
           role: currentUser.role || '',
           email: currentUser.email || '',
           phone: currentUser.phone || '',
-          avatar: currentUser.avatar || '../../data/images/default.jpg'
+          avatar: currentUser.avatar || '../../../default.jpg'
         });
       }
       const data = await getOwn();

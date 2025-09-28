@@ -24,7 +24,7 @@ function Footer() {
         <div className="footer-content">
           <div className="footer-section">
             <Link to="/" className="logo">
-              <img src="../../../public/vite.svg" alt="EduConnect" />
+              <img src="../../../vite.svg" alt="EduConnect" />
               <span>EduConnect</span>
             </Link>
             <p>Образовательная платформа для всех</p>
