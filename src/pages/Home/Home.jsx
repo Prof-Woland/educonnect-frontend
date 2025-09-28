@@ -114,7 +114,7 @@ const Home = () => {
           <div className="courses-grid">
             {isNotEmptyOwn?userCourses.map(course => (
               <CourseCard key={course.id} course={course} />
-            )) : <div className='course-none-own'>Войдите в личный кабинет, чтобы увидеть этот раздел!</div>}
+            )) : <div className='course-none-own'>Здесь пока ничего нет!</div>}
           </div>
         </div>
       </section>:<div/>}
