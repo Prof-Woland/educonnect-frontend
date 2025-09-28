@@ -9,7 +9,7 @@ function Footer() {
   const { currentUser, logout } = useAuth();
   let user;
   try {
-    user = JSON.parse(Cookies.get('token'));
+    user = JSON.parse(Cookies.get('user'));
   } catch {
     user = undefined;
   }
