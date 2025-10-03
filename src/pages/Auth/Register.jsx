@@ -11,12 +11,30 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Регулярное выражение для проверки пароля (минимум 8 символов)
+  const passwordRegex = /^.{8,}$/;
+
+  const validatePassword = (password) => {
+    if (!passwordRegex.test(password)) {
+      setPasswordError('Пароль должен содержать минимум 8 символов');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
   async function handleSubmit(event) {
     event.preventDefault();
+    
+    // Валидация пароля
+    if (!validatePassword(password)) {
+      return;
+    }
     
     if (password !== confirmPassword) {
       return setError('Пароли не совпадают');
@@ -33,6 +51,12 @@ function Register() {
     setLoading(false);
   }
 
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    validatePassword(newPassword);
+  };
+
   return (
     <div className="auth-page">
       <div className="container">
@@ -42,7 +66,7 @@ function Register() {
             
             {error && <div className="error-message">{error}</div>}
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Имя и фамилия</label>
               <input 
                 type="text" 
@@ -52,7 +76,7 @@ function Register() {
               />
             </div>
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Email</label>
               <input 
                 type="email" 
@@ -62,17 +86,21 @@ function Register() {
               />
             </div>
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Пароль</label>
               <input 
                 type="password" 
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 required 
               />
+              {passwordError && <div className="field-error">{passwordError}</div>}
+              <div className="password-requirements">
+                Минимум 8 символов
+              </div>
             </div>
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Подтвердите пароль</label>
               <input 
                 type="password" 
@@ -82,7 +110,7 @@ function Register() {
               />
             </div>
             
-            <button type="submit" disabled={loading} className="auth-button">
+            <button type="submit" disabled={loading || passwordError} className="auth-button">
               {loading ? 'Регистрация...' : 'Зарегистрироваться'}
             </button>
             

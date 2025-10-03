@@ -42,7 +42,7 @@ export function AuthProvider(props) {
   // Реальный API запрос для авторизации
   async function login(email, password) {
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/authorization', {
+      const response = await fetch('http://localhost:3000/auth/authorization', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -68,7 +68,7 @@ export function AuthProvider(props) {
   // Реальный API запрос для регистрации
   async function register(name, email, password) {
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/registration', {
+      const response = await fetch('http://localhost:3000/auth/registration', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -95,9 +95,9 @@ export function AuthProvider(props) {
   // API запрос для выхода
   async function logout() {
     if(window.confirm('Вы точно хотите выйти из аккаунта?')){
-      const token = JSON.parse(Cookies.get('token'));
       try {
-        await fetch('https://educonnect-backend-qrh6.onrender.com/auth/logout', { 
+        const token = JSON.parse(Cookies.get('token'));
+        await fetch('http://localhost:3000/auth/logout', { 
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -162,7 +162,7 @@ export function AuthProvider(props) {
 
 export async function refresh(id){
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/refresh', {
+      const response = await fetch('http://localhost:3000/auth/refresh', {
         method: 'POST',
         credentials: 'include',
         headers: {

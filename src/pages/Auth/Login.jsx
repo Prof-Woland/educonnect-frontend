@@ -9,12 +9,30 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   
   const { login, refresh } = useAuth();
   const navigate = useNavigate();
 
+  // Регулярное выражение для проверки пароля (минимум 8 символов)
+  const passwordRegex = /^.{8,}$/;
+
+  const validatePassword = (password) => {
+    if (!passwordRegex.test(password)) {
+      setPasswordError('Пароль должен содержать минимум 8 символов');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
   async function handleSubmit(event) {
     event.preventDefault();
+    
+    // Валидация пароля перед отправкой
+    if (!validatePassword(password)) {
+      return;
+    }
     
     try {
       setError('');
@@ -27,6 +45,18 @@ function Login() {
     setLoading(false);
   }
 
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    
+    // Валидация в реальном времени (опционально)
+    if (newPassword && !passwordRegex.test(newPassword)) {
+      setPasswordError('Пароль должен содержать минимум 8 символов');
+    } else {
+      setPasswordError('');
+    }
+  };
+
   return (
     <div className="auth-page">
       <div className="container">
@@ -36,7 +66,7 @@ function Login() {
             
             {error && <div className="error-message">{error}</div>}
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Email</label>
               <input 
                 type="email" 
@@ -46,17 +76,26 @@ function Login() {
               />
             </div>
             
-            <div className="form-group">
+            <div className="form-group-auth">
               <label>Пароль</label>
               <input 
                 type="password" 
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange}
                 required 
               />
+              {passwordError && (
+                <div className="error-message" style={{fontSize: '12px', marginTop: '5px'}}>
+                  {passwordError}
+                </div>
+              )}
             </div>
             
-            <button type="submit" disabled={loading} className="auth-button">
+            <button 
+              type="submit" 
+              disabled={loading || passwordError} 
+              className="auth-button"
+            >
               {loading ? 'Вход...' : 'Войти'}
             </button>
             

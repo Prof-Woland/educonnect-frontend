@@ -186,7 +186,7 @@ function Account() {
         {isAdmin ? (
           <section className="user-courses">
             <div className="container">
-              <h2>Админская тема</h2>
+              <h2>Панель администратора</h2>
               <div className="courses-grid">
                 {/* Админский контент */}
               </div>
@@ -203,7 +203,7 @@ async function getOwn(){
   const user = JSON.parse(Cookies.get('user')); // Добавляем получение user
   
   try {
-    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
+    const response = await fetch('http://localhost:3000/courses/own', {
       method: 'GET',
       credentials: 'include',
       headers: {

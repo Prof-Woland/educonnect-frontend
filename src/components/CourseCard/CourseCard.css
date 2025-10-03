@@ -1,5 +1,5 @@
 /* src/components/CourseCard.css */
-.course-card {
+.course-card-main {
   background: white;
   border-radius: 12px;
   overflow: hidden;
@@ -10,29 +10,29 @@
   height: 100%;
 }
 
-.course-card:hover {
+.course-card-main:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.course-image-card {
+.course-image-card-main {
   position: relative;
   height: 180px;
   overflow: hidden;
 }
 
-.course-image-card img {
+.course-image-card-main img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.course-card:hover .course-image-card img {
+.course-card-main:hover .course-image-card-main img {
   transform: scale(1.05);
 }
 
-.course-level-card {
+.course-level-card-main {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -44,21 +44,21 @@
   font-weight: bold;
 }
 
-.course-content-card {
+.course-content-card-main {
   padding: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.course-content-card h3 {
+.course-content-card-main h3 {
   font-size: 18px;
   color: #1e3a8a;
   margin-bottom: 10px;
   line-height: 1.3;
 }
 
-.course-description-card {
+.course-description-card-main {
   font-size: 14px;
   color: #64748b;
   line-height: 1.5;
@@ -66,7 +66,7 @@
   flex: 1;
 }
 
-.course-meta-card {
+.course-meta-card-main {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -74,13 +74,13 @@
   color: #64748b;
 }
 
-.course-meta-card span {
+.course-meta-card-main span {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.course-price-card {
+.course-price-card-main {
   font-size: 20px;
   font-weight: bold;
   color: #1e3a8a;
@@ -88,7 +88,7 @@
   text-align: center;
 }
 
-.enroll-button-card {
+.enroll-button-card-main {
   background: #3b82f6;
   color: white;
   border: none;
@@ -101,22 +101,22 @@
   width: 100%;
 }
 
-.enroll-button-card:hover {
+.enroll-button-card-main:hover {
   background: #1e3a8a;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
-  .course-meta-card {
+  .course-meta-card-main {
     flex-direction: column;
     gap: 5px;
   }
 
-  .course-meta-card span{
+  .course-meta-card-main span{
     font-size: 16px;
   }
   
-  .course-content-card {
+  .course-content-card-main {
     padding: 15px;
   }
 }

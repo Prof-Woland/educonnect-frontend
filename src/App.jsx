@@ -13,6 +13,9 @@ import { AuthProvider } from './context/AuthContext';
 import Register from './pages/Auth/Register';
 import Login from './pages/Auth/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import CreateCourse from './pages/CreateCourse/CreateCourse';
+import AdminPanel from './pages/AdminPanel/AdminPanel';
+import AdminCourseDetail from './pages/AdminPanel/AdminCourseDetail/AdminCourseDetail';
 
 function App() {
   return (
@@ -25,9 +28,12 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/community" element={<Community />} />
-              <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/admin/courses/:id" element={<AdminCourseDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/create-course" element={<CreateCourse/>} />
+              <Route path="/admin" element={<AdminPanel />} />
               <Route 
                 path="/account" 
                 element={

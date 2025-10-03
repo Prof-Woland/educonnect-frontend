@@ -90,17 +90,16 @@ const Home = () => {
 
   return (
     <div className="home">
-      <section className="hero">
+      <section className="hero-home">
         <div className="container">
           <h1>Образование будущего уже здесь</h1>
           <p>Инновационные курсы от лучших преподавателей</p>
         </div>
       </section>
-
-      <section className="courses-section">
+      <section className="courses-section-home">
         <div className="container">
           <h2>Популярные курсы</h2>
-          <div className="courses-grid">
+          <div className="courses-grid-home">
             {isNotEmptyPopular?popularCourses.map(course => (
               <CourseCard key={course.id} course={course} />
             )) : <div className='course-none'>Здесь пока ничего нет!</div>}
@@ -108,10 +107,10 @@ const Home = () => {
         </div>
       </section>
       {isTeacher||isStudent?
-      <section className="courses-section">
+      <section className="courses-section-home">
         <div className="container">
           <h2>Мои курсы</h2>
-          <div className="courses-grid">
+          <div className="courses-grid-home">
             {isNotEmptyOwn?userCourses.map(course => (
               <CourseCard key={course.id} course={course} />
             )) : <div className='course-none-own'>Здесь пока ничего нет!</div>}
@@ -119,9 +118,9 @@ const Home = () => {
         </div>
       </section>:<div/>}
       {isAdmin?
-      <section className="courses-section">
+      <section className="courses-section-home">
         <div className="container">
-          <h2>Админская тема</h2>
+          <h2>Панель администратора</h2>
           <div className="courses-grid">
             {/* {isNotEmptyOwn?userCourses.map(course => (
               <CourseCard key={course.id} course={course} />
@@ -139,7 +138,7 @@ async function getPopular(){
   // if(!cookieData)
   // {
   try {
-    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/popular', {
+    const response = await fetch('http://localhost:3000/courses/popular', {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -178,7 +177,7 @@ async function getOwn(){
     const token = JSON.parse(Cookies.get('token'));
     const userData = JSON.parse(Cookies.get('user'));
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
+      const response = await fetch('http://localhost:3000/courses/own', {
         method: 'GET',
         credentials: 'include',
         headers: {

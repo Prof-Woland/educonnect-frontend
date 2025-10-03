@@ -7,7 +7,7 @@ import './Footer.css';
 
 function Footer() {
   const { currentUser, logout } = useAuth();
-  let user;
+  let user, role;
   try {
     user = JSON.parse(Cookies.get('user'));
   } catch {
@@ -16,6 +16,12 @@ function Footer() {
 
   function handleLogout() {
     logout();
+  }
+
+  if(user == undefined){
+    role = 'student'
+  }else{
+    role = user.role
   }
 
   return (
@@ -36,6 +42,8 @@ function Footer() {
               <Link to="/">Главная</Link>
               <Link to="/courses">Курсы</Link>
               <Link to="/community">Сообщество</Link>
+              {(role == 'teacher'||role == 'admin')?(<Link to="/create-course">Создать курс</Link>): null}
+              {(role == 'admin')?(<Link to="/admin">Админ. панель</Link>): null}
               {user ? (
                 <Link to="/account">Аккаунт</Link>
               ) : (

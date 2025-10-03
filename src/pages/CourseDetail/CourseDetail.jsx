@@ -14,7 +14,7 @@ function CourseDetail(props) {
   const [error, setError] = useState(null);
   const [course, setCourse] = useState(null);
   const uri = '../../../default.jpg'
-  let user, token;
+  let user, token, level
   let isAuth = false;
 
   try{
@@ -32,6 +32,7 @@ function CourseDetail(props) {
       try {
         setLoading(true);
         const data = await getOne(id);
+        console.log(data)
         setCourse(data);
       } catch (err) {
         setError(err.message);
@@ -42,12 +43,11 @@ function CourseDetail(props) {
 
     fetchCourses();
   }, [id]);
-
   // Добавляем функцию recording с navigate
   async function recording(id, token, name) {
     console.log(id);
     try {
-      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/record`, {
+      const response = await fetch(`http://localhost:3000/courses/record`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -135,6 +135,18 @@ function CourseDetail(props) {
     );
   }
 
+
+          if(course.level == 'легкий'){
+            level = "Начальный"
+          }
+          else if(course.level == 'средний'){
+            level = "Средний"
+          }else if(course.level == 'тяжелый'){
+            level = "Продвинутый"
+          }else{
+            level = "Не указан"
+          }
+
   return (
     <div className="course-detail">
       <div className="container">
@@ -156,7 +168,7 @@ function CourseDetail(props) {
               </div>
               <div className="meta-item">
                 <span className="label">Уровень:</span>
-                <span className="value">{course.level}</span>
+                <span className="value">{level}</span>
               </div>
               <div className="meta-item">
                 <span className="label">Рейтинг:</span>
@@ -183,24 +195,22 @@ function CourseDetail(props) {
         <div className="course-content">
           <div className="content-section">
             <h2>О курсе</h2>
-            <p>Этот курс предназначен для {getCourseAudience(course.level)}. Вы изучите ключевые аспекты {course.name?.toLowerCase()} и получите практические навыки, которые можно сразу применить в реальных проектах.</p>
+            <p>{course.detailDescription}</p>
           </div>
 
           <div className="content-section">
             <h2>Программа курса</h2>
             <div className="curriculum">
-              {generateCurriculum(course).map(function(module, index) {
-                return (
-                  <div key={index} className="module">
-                    <h3>Модуль {index + 1}: {module.title}</h3>
-                    <ul>
-                      {module.lessons.map(function(lesson, lessonIndex) {
-                        return <li key={lessonIndex}>{lesson}</li>;
-                      })}
-                    </ul>
-                  </div>
-                );
-              })}
+              {generateCurriculum(course).map((module, index) => (
+                <div key={index} className="module">
+                  <h3>Модуль {index + 1}: {module.title}</h3>
+                  <ul>
+                    {module.lessons.map((lesson, lessonIndex) => (
+                      <li key={lessonIndex}>{lesson}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -231,7 +241,7 @@ function getCourseAudience(level) {
 
 async function getOne(id){
   try {
-    const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/${id}`, {
+    const response = await fetch(`http://localhost:3000/courses/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -255,22 +265,51 @@ async function getOne(id){
 
 
 function generateCurriculum(course) {
-  const modulesCount = course.time?.includes('недел') ? 
-    parseInt(course.time) : 4;
-  
-  const modules = [];
-  for (let i = 0; i < modulesCount; i++) {
-    modules.push({
-      title: `Основы ${course.name?.split(' ')[0] || 'курса'}`,
-      lessons: [
-        'Введение в тему',
-        'Базовые концепции',
-        'Практическое задание',
-        'Тестирование знаний'
-      ]
-    });
+  if (!course.parts) {
+    return [{
+      title: 'Программа курса',
+      lessons: ['Информация о модулях будет доступна позже']
+    }];
   }
-  return modules;
+
+  let partsData;
+  
+  try {
+    // Пробуем разные способы парсинга
+    if (typeof course.parts === 'string') {
+      // Убираем экранирование и парсим
+      const cleanJsonString = course.parts
+        .replace(/\\"/g, '"')
+        .replace(/^"|"$/g, ''); // Убираем внешние кавычки если есть
+      
+      partsData = JSON.parse(cleanJsonString);
+    } else {
+      partsData = course.parts;
+    }
+  } catch (parseError) {
+    console.error('Parse error:', parseError);
+    return [{
+      title: 'Программа курса',
+      lessons: ['Ошибка загрузки программы курса']
+    }];
+  }
+
+  // Обрабатываем полученные данные
+  if (!Array.isArray(partsData)) {
+    return [{
+      title: 'Программа курса',
+      lessons: ['Модули еще не добавлены']
+    }];
+  }
+
+  return partsData.map((part) => ({
+    title: part.title || 'Модуль без названия',
+    lessons: Array.isArray(part.lessons) 
+      ? part.lessons.map(lesson => 
+          typeof lesson === 'object' ? (lesson.title || 'Без названия') : String(lesson)
+        )
+      : ['Содержание модуля будет добавлено позже']
+  }));
 }
 
 function getInstructorBio(category) {

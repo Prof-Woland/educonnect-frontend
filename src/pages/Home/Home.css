@@ -1,5 +1,5 @@
 /* src/pages/Home.css */
-.hero {
+.hero-home {
   background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
   padding: 100px 0;
@@ -7,16 +7,16 @@
   width: 100%;
 }
 
-.hero h1 {
+.hero-home h1 {
   font-size: 36px;
   margin-bottom: 20px;
 }
 
-.course-none{
+.course-none-home{
   color: #1e3a8a;
 }
 
-.course-none-own{
+.course-none-own-home{
   color: #1e3a8a;
   font-size: 18px;
   font-weight:500;
@@ -24,19 +24,19 @@
 }
 
 
-.courses-section {
+.courses-section-home {
   padding: 50px 0;
   width: 100%;
 }
 
-.courses-section h2 {
+.courses-section-home h2 {
   font-size: 28px;
   margin-bottom: 30px;
   color: #1e3a8a;
   text-align: center;
 }
 
-.courses-grid {
+.courses-grid-home {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
@@ -44,17 +44,17 @@
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 1200px) {
-  .courses-grid {
+  .courses-grid-home {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .courses-grid {
+  .courses-grid-home {
     grid-template-columns: 1fr;
   }
 
-  .course-none-own {
+  .course-none-own-home {
     width: 100%;
     font-size: 16px;
     padding: 0 20px;
@@ -62,42 +62,42 @@
     text-align: center;
   }
   
-  .hero {
+  .hero-home {
     padding: 60px 0;
   }
   
-  .hero h1 {
+  .hero-home h1 {
     font-size: 28px;
   }
 }
 
 @media (max-width: 480px) {
-  .course-none-own {
+  .course-none-own-home {
     font-size: 14px;
     padding: 0 15px;
   }
 }
 
 @media (max-width: 360px) {
-  .course-none-own {
+  .course-none-own-home {
     font-size: 13px;
     padding: 0 10px;
   }
 }
 
-.courses-section {
+.courses-section-home {
   padding: 50px 0;
   width: 100%;
 }
 
-.courses-section h2 {
+.courses-section-home h2 {
   font-size: 28px;
   margin-bottom: 30px;
   color: #1e3a8a;
   text-align: center;
 }
 
-.courses-grid {
+.courses-grid-home {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;

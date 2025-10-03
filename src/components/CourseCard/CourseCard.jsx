@@ -86,21 +86,21 @@ function CourseCard(props) {
     }
 
   return (
-    <div className="course-card" onClick={handleCardClick}>
-      <div className="course-image-card">
+    <div className="course-card-main" onClick={handleCardClick}>
+      <div className="course-image-card-main">
         <img src={uri} alt={props.course.name} />
-        <div className="course-level-card">{level}</div>
+        <div className="course-level-card-main">{level}</div>
       </div>
-      <div className="course-content-card">
+      <div className="course-content-card-main">
         <h3>{props.course.name}</h3>
-        <p className="course-description-card">{props.course.description}</p>
-        <div className="course-meta-card">
-          <span className="duration-card">{props.course.time}</span>
-          <span className="rating-card">★ {props.course.rating}</span>
-          <span className="students-card">👥 {props.course.studentsCount}</span>
+        <p className="course-description-card-main">{props.course.description}</p>
+        <div className="course-meta-card-main">
+          <span className="duration-card-main">{props.course.time}</span>
+          <span className="rating-card-main">★ {props.course.rating}</span>
+          <span className="students-card-main">👥 {props.course.studentsCount}</span>
         </div>
-        <div className="course-price-card">{props.course.cost}</div>
-        <button className="enroll-button-card" onClick={handleEnrollClick}>
+        <div className="course-price-card-main">{props.course.cost}</div>
+        <button className="enroll-button-card-main" onClick={handleEnrollClick}>
           Записаться
         </button>
       </div>
