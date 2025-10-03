@@ -241,7 +241,7 @@ function getCourseAudience(level) {
 
 async function getOne(id){
   try {
-    const response = await fetch(`http://localhost:3000/courses/${id}`, {
+    const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
