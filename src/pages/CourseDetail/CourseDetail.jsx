@@ -47,7 +47,7 @@ function CourseDetail(props) {
   async function recording(id, token, name) {
     console.log(id);
     try {
-      const response = await fetch(`http://localhost:3000/courses/record`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/record`, {
         method: 'POST',
         credentials: 'include',
         headers: {

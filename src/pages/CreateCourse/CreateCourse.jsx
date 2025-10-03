@@ -172,7 +172,7 @@ function CreateCourse() {
     try {
       console.log(courseData.level)
       const token = JSON.parse(Cookies.get('token'));
-      const response = await fetch('http://localhost:3000/courses/create', {
+      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/create', {
         method: 'POST',
         credentials: 'include',
         headers: {

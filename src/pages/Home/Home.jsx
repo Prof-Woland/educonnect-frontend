@@ -138,7 +138,7 @@ async function getPopular(){
   // if(!cookieData)
   // {
   try {
-    const response = await fetch('http://localhost:3000/courses/popular', {
+    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/popular', {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -146,10 +146,22 @@ async function getPopular(){
       },
     });
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message);
-    }
+      if (!response.ok) {
+        if(response.status == 401){
+          await refresh(userData.id)
+        }
+        const errorData = await response.json();
+        if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
+          ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
+          ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
+          ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
+          ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
+          Cookies.remove('user');
+          Cookies.remove('token');
+        }
+        
+        throw new Error(errorData.message);
+      }
     
     const data = await response.json();
     
@@ -177,7 +189,7 @@ async function getOwn(){
     const token = JSON.parse(Cookies.get('token'));
     const userData = JSON.parse(Cookies.get('user'));
     try {
-      const response = await fetch('http://localhost:3000/courses/own', {
+      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
         method: 'GET',
         credentials: 'include',
         headers: {

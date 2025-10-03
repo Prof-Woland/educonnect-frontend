@@ -65,7 +65,7 @@ function AdminCourseDetail() {
   // Функция загрузки комментариев модераторов
   const fetchModeratorComments = async (courseId, token) => {
     try {
-      const response = await fetch(`http://localhost:3000/admin/pending/comments/${courseId}`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/pending/comments/${courseId}`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -112,7 +112,7 @@ function AdminCourseDetail() {
       const token = JSON.parse(Cookies.get('token') || '{}');
       const user = JSON.parse(Cookies.get('user') || '{}');
       
-      const response = await fetch(`http://localhost:3000/admin/addComment`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/addComment`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -161,7 +161,7 @@ function AdminCourseDetail() {
 
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
-      const response = await fetch(`http://localhost:3000/admin/pending/approve/${id}`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/pending/approve/${id}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -205,7 +205,7 @@ function AdminCourseDetail() {
 
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
-      const response = await fetch(`http://localhost:3000/admin/courses/${id}/reject`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/courses/${id}/reject`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -249,7 +249,7 @@ function AdminCourseDetail() {
 
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
-      const response = await fetch(`http://localhost:3000/admin/courses/${id}`, {
+      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/courses/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -616,7 +616,7 @@ function AdminCourseDetail() {
 // Вспомогательные функции
 async function getOne(id, token) {
   try {
-    const response = await fetch(`http://localhost:3000/admin/pending/${id}`, {
+    const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/admin/pending/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
