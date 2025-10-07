@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import './AdminPanel.css';
 
 const API_URI = 'https://educonnect-backend-qrh6.onrender.com';
+const uri = '../../../default.jpg'
 
 const CourseModeration = () => {
   const [pendingCourses, setPendingCourses] = useState([]);
@@ -207,7 +208,7 @@ const CourseModeration = () => {
                     onClick={() => handleCourseClick(course.id)}
                   >
                     <div className="course-image-mod">
-                      <img src={course.image || '../../../public/default.jpg'} alt={course.title} />
+                      <img src={course.image || uri} alt={course.title} />
                     </div>
                     <div className="course-info-mod">
                       <h4>{course.name}</h4>
@@ -255,7 +256,7 @@ const CourseModeration = () => {
                     onClick={() => handlePublishedCourseClick(course.id)}
                   >
                     <div className="course-image-mod">
-                      <img src={course.image || '../../../public/default.jpg'} alt={course.name} />
+                      <img src={course.image || uri} alt={course.name} />
                     </div>
                     <div className="course-info-mod">
                       <h4>{course.name}</h4>
