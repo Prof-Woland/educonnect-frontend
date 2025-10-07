@@ -1006,3 +1006,572 @@
     flex-direction: column;
   }
 }
+
+/* Адаптивные стили для Admin Panel */
+
+/* Общие адаптивные стили */
+@media (max-width: 1200px) {
+  .admin-content {
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  
+  .charts-section {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-title {
+    font-size: 32px;
+    margin: 25px 0;
+  }
+  
+  .courses-grid-mod {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+  }
+  
+  .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-panel {
+    padding: 0 10px;
+  }
+  
+  .admin-title {
+    font-size: 28px;
+    margin: 20px 0;
+  }
+  
+  .admin-tabs {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 30px;
+    padding: 0 10px;
+  }
+  
+  .admin-tab {
+    padding: 12px 20px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    border-left: 3px solid transparent;
+  }
+  
+  .admin-tab.active {
+    border-bottom-color: #e2e8f0;
+    border-left-color: #2c5282;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .admin-content {
+    padding: 20px 15px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+  }
+  
+  /* User Management адаптивность */
+  .user-management .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .section-header h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+  
+  .search-box {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-input {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .filter-select {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .users-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .user-card {
+    padding: 20px;
+    gap: 15px;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+  }
+  
+  .user-details h3 {
+    font-size: 16px;
+  }
+  
+  .user-email {
+    font-size: 13px;
+  }
+  
+  .role-actions {
+    flex-direction: column;
+  }
+  
+  .user-stats {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .stat-item {
+    flex: 0 0 calc(50% - 5px);
+  }
+  
+  /* Course Moderation адаптивность */
+  .courses-grid-mod {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .course-card-mod {
+    margin-bottom: 15px;
+  }
+  
+  .course-image-mod {
+    height: 160px;
+  }
+  
+  .course-info-mod {
+    padding: 15px;
+  }
+  
+  .course-info-mod h4 {
+    font-size: 16px;
+  }
+  
+  .moderation-actions-mod {
+    padding: 0 15px 15px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-approve, .btn-reject, .btn-delete {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+  
+  .feedback-input {
+    height: 60px;
+    font-size: 13px;
+  }
+  
+  /* Metrics Dashboard адаптивность */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .metric-card {
+    padding: 20px 15px;
+  }
+  
+  .metric-value {
+    font-size: 32px;
+  }
+  
+  .metric-label {
+    font-size: 14px;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .chart-container {
+    padding: 20px;
+  }
+  
+  .chart-container h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .role-item, .status-item {
+    padding: 8px 0;
+  }
+  
+  .role-name, .status-name {
+    min-width: 100px;
+    font-size: 14px;
+  }
+  
+  .role-count, .status-count {
+    min-width: 40px;
+    font-size: 14px;
+  }
+  
+  .role-bar {
+    margin: 0 10px;
+  }
+  
+  .recent-activity {
+    padding: 20px;
+  }
+  
+  .recent-activity h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .activity-type {
+    min-width: auto;
+  }
+  
+  .activity-description {
+    flex: none;
+    width: 100%;
+  }
+  
+  .activity-time {
+    min-width: auto;
+    text-align: left;
+    font-size: 11px;
+  }
+  
+  /* Clickable card адаптивность */
+  .clickable-card-mod::after {
+    content: '👁️';
+    font-size: 12px;
+    padding: 6px;
+    top: 5px;
+    right: 5px;
+  }
+  
+  .clickable-card-mod:hover::after {
+    content: 'Детали';
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-panel {
+    padding: 0 5px;
+  }
+  
+  .admin-title {
+    font-size: 24px;
+    margin: 15px 0;
+  }
+  
+  .admin-content {
+    padding: 15px 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  /* User Management мобильная адаптивность */
+  .user-card {
+    padding: 15px;
+  }
+  
+  .user-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .stat-item {
+    flex: 0 0 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .stat-value {
+    font-size: 14px;
+  }
+  
+  .stat-label {
+    font-size: 10px;
+    margin-top: 0;
+  }
+  
+  .role-select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  /* Course Moderation мобильная адаптивность */
+  .moderation-section h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .course-image-mod {
+    height: 140px;
+  }
+  
+  .course-info-mod {
+    padding: 12px;
+  }
+  
+  .course-meta-mod {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .moderation-actions-mod {
+    padding: 0 12px 12px;
+  }
+  
+  /* Metrics Dashboard мобильная адаптивность */
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .metric-card {
+    padding: 15px;
+  }
+  
+  .metric-value {
+    font-size: 28px;
+  }
+  
+  .chart-container {
+    padding: 15px;
+  }
+  
+  .role-distribution, .course-status {
+    gap: 10px;
+  }
+  
+  /* Empty states */
+  .users-empty-state,
+  .empty-state {
+    padding: 40px 20px;
+  }
+  
+  .users-empty-state .empty-icon {
+    font-size: 36px;
+    margin-bottom: 15px;
+  }
+  
+  .users-empty-state h3 {
+    font-size: 18px;
+  }
+  
+  .users-empty-state p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tabs {
+    padding: 0 5px;
+  }
+  
+  .admin-tab {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  /* Очень маленькие экраны */
+  .search-input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .filter-select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+  
+  .user-details h3 {
+    font-size: 15px;
+  }
+  
+  .course-info-mod h4 {
+    font-size: 15px;
+  }
+  
+  .course-description-mod {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  
+  .btn-approve, .btn-reject, .btn-delete {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .metric-value {
+    font-size: 24px;
+  }
+  
+  .metric-label {
+    font-size: 13px;
+  }
+}
+
+/* Особые случаи для landscape ориентации на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+  .admin-tabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .admin-tab {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .users-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .courses-grid-mod {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Высокие экраны (более 1200px в высоту) */
+@media (min-height: 1200px) {
+  .admin-panel {
+    min-height: 100vh;
+  }
+  
+  .admin-content {
+    margin-bottom: 50px;
+  }
+}
+
+/* Поддержка темной темы (опционально) */
+@media (prefers-color-scheme: dark) {
+  .admin-panel {
+    background-color: #1a202c;
+    color: #e2e8f0;
+  }
+  
+  .admin-content {
+    background: #2d3748;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .search-input,
+  .filter-select,
+  .role-select,
+  .feedback-input {
+    background: #4a5568;
+    border-color: #718096;
+    color: #e2e8f0;
+  }
+  
+  .search-input:focus,
+  .filter-select:focus,
+  .role-select:focus,
+  .feedback-input:focus {
+    border-color: #63b3ed;
+    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+  }
+}
+
+/* Анимации для плавного изменения размера */
+.admin-content,
+.user-card,
+.course-card-mod,
+.metric-card {
+  transition: all 0.3s ease;
+}
+
+/* Улучшенная доступность для тач-устройств */
+@media (hover: none) and (pointer: coarse) {
+  .user-card:hover,
+  .course-card-mod:hover,
+  .clickable-card-mod:hover {
+    transform: none;
+  }
+  
+  .admin-tab:hover {
+    background-color: transparent;
+  }
+  
+  /* Увеличиваем зоны клика для мобильных */
+  .admin-tab,
+  .btn-approve,
+  .btn-reject,
+  .btn-delete,
+  .role-select {
+    min-height: 44px;
+  }
+  
+  .search-input,
+  .filter-select,
+  .feedback-input {
+    min-height: 44px;
+  }
+}
+
+/* Поддержка очень больших экранов */
+@media (min-width: 1920px) {
+  .admin-panel {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+  
+  .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 35px;
+  }
+  
+  .courses-grid-mod {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 35px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+  }
+}
