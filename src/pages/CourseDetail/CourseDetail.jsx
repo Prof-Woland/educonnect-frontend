@@ -66,18 +66,14 @@ function CourseDetail(props) {
       },
     });
     
-    console.log('Enrollment check response status:', response.status);
-    
     if (!response.ok) {
       // Если статус 404 - пользователь не записан, это нормально
       if (response.status === 404) {
-        console.log('User is not enrolled in the course');
         setIsEnrolled(false);
         return false;
       }
       
       if (response.status === 401) {
-        console.log('Token expired, refreshing...');
         if (user) {
           await refresh(user.id);
         }
@@ -107,13 +103,9 @@ function CourseDetail(props) {
     let data;
     try {
       const responseText = await response.text();
-      console.log('Enrollment check response text:', responseText);
-      
       if (responseText) {
         data = JSON.parse(responseText);
       } else {
-        // Пустой ответ - считаем, что пользователь не записан
-        console.log('Empty response, assuming not enrolled');
         setIsEnrolled(false);
         return false;
       }
@@ -122,8 +114,7 @@ function CourseDetail(props) {
       setIsEnrolled(false);
       return false;
     }
-    
-    console.log('Enrollment data:', data);
+
     setIsEnrolled(data.isRecorded || false);
     return data.isRecorded || false;
     
