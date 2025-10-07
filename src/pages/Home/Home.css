@@ -12,17 +12,23 @@
   margin-bottom: 20px;
 }
 
-.course-none-home{
-  color: #1e3a8a;
-}
-
-.course-none-own-home{
+.course-none {
   color: #1e3a8a;
   font-size: 18px;
-  font-weight:500;
-  width: 200%;
+  font-weight: 500;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 20px;
 }
 
+.course-none-own {
+  color: #1e3a8a;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 20px;
+}
 
 .courses-section-home {
   padding: 50px 0;
@@ -42,24 +48,32 @@
   gap: 20px;
 }
 
-/* Адаптивность для мобильных устройств */
+/* Адаптивность для карточек курсов */
 @media (max-width: 1200px) {
   .courses-grid-home {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .courses-grid-home {
     grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 }
 
 @media (max-width: 768px) {
   .courses-grid-home {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
 
-  .course-none-own-home {
+  .course-none,
+  .course-none-own {
     width: 100%;
     font-size: 16px;
-    padding: 0 20px;
-    box-sizing: border-box;
-    text-align: center;
+    padding: 15px;
   }
   
   .hero-home {
@@ -69,36 +83,95 @@
   .hero-home h1 {
     font-size: 28px;
   }
+  
+  .courses-section-home h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .courses-grid-home {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .course-none,
+  .course-none-own {
+    font-size: 16px;
+    padding: 15px;
+  }
+  
+  .hero-home {
+    padding: 50px 0;
+  }
+  
+  .hero-home h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .hero-home p {
+    font-size: 16px;
+  }
+  
+  .courses-section-home {
+    padding: 30px 0;
+  }
+  
+  .courses-section-home h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
 }
 
 @media (max-width: 480px) {
-  .course-none-own-home {
-    font-size: 14px;
-    padding: 0 15px;
+  .course-none,
+  .course-none-own {
+    font-size: 15px;
+    padding: 12px;
+  }
+  
+  .hero-home {
+    padding: 40px 20px;
+  }
+  
+  .hero-home h1 {
+    font-size: 22px;
   }
 }
 
 @media (max-width: 360px) {
-  .course-none-own-home {
-    font-size: 13px;
-    padding: 0 10px;
+  .course-none,
+  .course-none-own {
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .hero-home h1 {
+    font-size: 20px;
+  }
+  
+  .courses-section-home h2 {
+    font-size: 20px;
   }
 }
 
-.courses-section-home {
-  padding: 50px 0;
-  width: 100%;
+/* Контейнер для ограничения максимальной ширины */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
 
-.courses-section-home h2 {
-  font-size: 28px;
-  margin-bottom: 30px;
-  color: #1e3a8a;
-  text-align: center;
+/* Адаптивные отступы для контейнера */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
 }
 
-.courses-grid-home {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
 }

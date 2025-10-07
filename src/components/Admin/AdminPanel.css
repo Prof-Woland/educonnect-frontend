@@ -1487,36 +1487,6 @@
   }
 }
 
-/* Поддержка темной темы (опционально) */
-@media (prefers-color-scheme: dark) {
-  .admin-panel {
-    background-color: #1a202c;
-    color: #e2e8f0;
-  }
-  
-  .admin-content {
-    background: #2d3748;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  }
-  
-  .search-input,
-  .filter-select,
-  .role-select,
-  .feedback-input {
-    background: #4a5568;
-    border-color: #718096;
-    color: #e2e8f0;
-  }
-  
-  .search-input:focus,
-  .filter-select:focus,
-  .role-select:focus,
-  .feedback-input:focus {
-    border-color: #63b3ed;
-    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
-  }
-}
-
 /* Анимации для плавного изменения размера */
 .admin-content,
 .user-card,
