@@ -5,6 +5,8 @@ import './CourseCard.css';
 import {refresh} from '../../context/AuthContext'
 import Cookies from 'js-cookie';
 
+const API_URI = 'https://educonnect-backend-qrh6.onrender.com';
+
 function CourseCard(props) {
   const navigate = useNavigate();
   const uri = '../../../default.jpg'
@@ -29,24 +31,24 @@ function CourseCard(props) {
     if(isAuth){
       recording(props.course.id, token, props.course.name)
     }else{
-      navigate('login')
+      navigate('/login')
     }
   }
 
-  if(props.course.level == 'easy'){
-    level = "Легкий"
+  if(props.course.level == 'легкий'){
+    level = "Начальный"
   }
-  else if(props.course.level == 'medium'){
+  else if(props.course.level == 'средний'){
     level = "Средний"
-  }else if(props.course.level == 'hard'){
-    level = "Тяжелый"
+  }else if(props.course.level == 'тяжелый'){
+    level = "Продвинутый"
   }else{
     level = "Неизвестно"
   }
 
     async function recording(id, token, name) {
       try {
-        const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/record`, {
+        const response = await fetch(`${API_URI}/courses/record`, {
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -77,7 +79,6 @@ function CourseCard(props) {
         
         const data = await response.json();
         window.alert(`Вы записались на курс: ${name}`);
-        navigate('/'); // Добавляем navigate здесь
         return data;
       } catch (error) {
         console.error('Error fetching recording:', error);

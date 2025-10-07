@@ -16,6 +16,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import CreateCourse from './pages/CreateCourse/CreateCourse';
 import AdminPanel from './pages/AdminPanel/AdminPanel';
 import AdminCourseDetail from './pages/AdminPanel/AdminCourseDetail/AdminCourseDetail';
+import AdminCourseDetailPublished from './pages/AdminPanel/AdminCourseDetail/AdminCourseDetailPublished';
+import AdminCourseDetailTeacher from './pages/AdminPanel/AdminCourseDetail/AdminCourseDetailTeacher';
+import CourseManagementPage from './pages/CourseManagement/CourseManagement';
+import ModuleDetail from './pages/CourseDetail/ModuleDetail';
+import LessonDetail from './pages/CourseDetail/LessonDetail';
 
 function App() {
   return (
@@ -29,10 +34,17 @@ function App() {
               <Route path="/courses" element={<Courses />} />
               <Route path="/community" element={<Community />} />
               <Route path="/admin/courses/:id" element={<AdminCourseDetail />} />
+              <Route path="/admin/courses/published/:id" element={<AdminCourseDetailPublished />} />
+              <Route path="/teacher/courses/:id" element={<AdminCourseDetailTeacher/>} />
+              <Route path="/admin/courses-management" element={<CourseManagementPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/course/:id" element={<CourseDetail />} />
               <Route path="/create-course" element={<CreateCourse/>} />
+              <Route path="/courses/:courseId/modules/:moduleId" element={<ModuleDetail />} />
+              <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonDetail />} />
+              <Route path="/admin/courses/:courseId/modules/:moduleId" element={<ModuleDetail />} />
+              <Route path="/admin/courses/:courseId/lessons/:lessonId" element={<LessonDetail />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route 
                 path="/account" 

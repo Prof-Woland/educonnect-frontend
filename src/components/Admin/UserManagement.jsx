@@ -18,7 +18,7 @@ const UserManagement = () => {
     try {
       const data = await adminAPI.getUsers(searchTerm);
       setUsers(data);
-      console.log(users)
+      console.log(data); // Исправил: выводим data вместо users (которые еще не обновлены)
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
@@ -26,14 +26,13 @@ const UserManagement = () => {
     }
   };
 
-  let filteredUsers
-
-    filteredUsers = users.filter(function(user) {
-      const matchesSearch = user.login.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = filter === 'all' || course.category === filter;
-      return matchesSearch && matchesFilter;
-    });
+  // Исправленная фильтрация
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.login?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filter === 'all' || user.role === filter;
+    return matchesSearch && matchesFilter;
+  });
 
   const handleRoleChange = async (userId, newRole) => {
     try {
@@ -43,6 +42,21 @@ const UserManagement = () => {
     } catch (error) {
       console.error('Error updating role:', error);
       alert('Ошибка при обновлении роли');
+    }
+  };
+
+  const handleDeleteUser = async (userId, userLogin) => {
+    if (!window.confirm(`Вы уверены, что хотите удалить пользователя "${userLogin}"? Это действие нельзя отменить.`)) {
+      return;
+    }
+
+    try {
+      await adminAPI.deleteUser(userId);
+      alert('Пользователь успешно удален');
+      loadUsers(); // Обновляем список пользователей
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert(`Ошибка при удалении пользователя: ${error.message}`);
     }
   };
 
@@ -58,6 +72,17 @@ const UserManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
           />
+          {/* Добавим фильтр по ролям */}
+          <select 
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="all">Все роли</option>
+            <option value="student">Студенты</option>
+            <option value="teacher">Преподаватели</option>
+            <option value="admin">Администраторы</option>
+          </select>
         </div>
       </div>
 
@@ -70,10 +95,10 @@ const UserManagement = () => {
               <div className="user-info">
                 <div className="user-avatar">
                   {user.avatar ? (
-                    <img src='../../../public/vite.svg' alt={user.name} />
+                    <img src={user.avatar || '../../../public/vite.svg'} alt={user.login} />
                   ) : (
                     <div className="avatar-placeholder">
-                      {user.name?.charAt(0).toUpperCase()}
+                      {user.login?.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
@@ -84,29 +109,25 @@ const UserManagement = () => {
                     {user.role === 'student' && 'Студент'}
                     {user.role === 'teacher' && 'Преподаватель'}
                     {user.role === 'admin' && 'Администратор'}
-                    </div>
+                  </div>
 
-                    // И добавьте статус пользователя (пример):
-                    <div className="user-status">
+                  {/* Статус пользователя */}
+                  <div className="user-status">
                     <div className={`status-dot ${user.isOnline ? '' : 'offline'}`}></div>
                     <span>{user.isOnline ? 'В сети' : 'Не в сети'}</span>
-                    </div>
+                  </div>
 
-                    // И статистику (пример):
-                    <div className="user-stats">
+                  {/* Статистика пользователя */}
+                  <div className="user-stats">
                     <div className="stat-item">
-                        <span className="stat-value">{user.coursesCount || 0}</span>
-                        <span className="stat-label">Курсы</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-value">{user.completedCourses || 0}</span>
-                        <span className="stat-label">Завершено</span>
+                      <span className="stat-value">{user.recordedCourses || 0}</span>
+                      <span className="stat-label">Курсы</span>
                     </div>
                     <div className="stat-item">
-                        <span className="stat-value">{user.rating || '0.0'}</span>
-                        <span className="stat-label">Рейтинг</span>
+                      <span className="stat-value">{user.completedCourses || 0}</span>
+                      <span className="stat-label">Завершено</span>
                     </div>
-                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -120,9 +141,26 @@ const UserManagement = () => {
                   <option value="teacher">Преподаватель</option>
                   <option value="admin">Администратор</option>
                 </select>
+                
+                {/* Кнопка удаления пользователя */}
+                <button 
+                  onClick={() => handleDeleteUser(user.id, user.login)}
+                  className="btn-delete-user"
+                  title="Удалить пользователя"
+                  disabled={user.role === 'admin'} // Запрещаем удалять администраторов
+                >
+                  🗑️ Удалить
+                </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Сообщение если пользователи не найдены */}
+      {!loading && filteredUsers.length === 0 && (
+        <div className="empty-state">
+          <p>Пользователи не найдены</p>
         </div>
       )}
     </div>

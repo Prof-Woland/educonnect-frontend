@@ -5,8 +5,11 @@ import { useAuth } from '../../context/AuthContext';
 import './Account.css';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+
 function Account() {
   const auth = useAuth();
+  const { updateProfile } = useAuth();
   const navigate = useNavigate()
   const { currentUser, loading } = auth;
   const [myCourses, setMyCourses] = useState([])
@@ -24,7 +27,7 @@ function Account() {
     async function fetchData() {
       if (currentUser) {
         setUserData({
-          name: currentUser.name || '',
+          login: currentUser.login || '',
           role: currentUser.role || '',
           email: currentUser.email || '',
           phone: currentUser.phone || '',
@@ -129,8 +132,8 @@ function Account() {
               <label>Имя и фамилия</label>
               <input 
                 type="text" 
-                name="name"
-                value={user.login}
+                name="login"
+                value={userData.login}
                 onChange={handleInputChange}
               />
             </div>
@@ -139,7 +142,7 @@ function Account() {
               <input 
                 type="email" 
                 name="email"
-                value={user.email}
+                value={userData.email}
                 onChange={handleInputChange}
               />
             </div>
@@ -148,7 +151,7 @@ function Account() {
               <input 
                 type="tel" 
                 name="phone"
-                value={user.phone}
+                value={userData.phone}
                 onChange={handleInputChange}
                 placeholder="+7 (999) 123-45-67"
               />
@@ -182,17 +185,6 @@ function Account() {
             <p>У вас пока нет активных курсов</p>
           )}
         </section>:<div/>}
-        
-        {isAdmin ? (
-          <section className="user-courses">
-            <div className="container">
-              <h2>Панель администратора</h2>
-              <div className="courses-grid">
-                {/* Админский контент */}
-              </div>
-            </div>
-          </section>
-        ) : null}
       </div>
     </div>
   );
@@ -203,7 +195,7 @@ async function getOwn(){
   const user = JSON.parse(Cookies.get('user')); // Добавляем получение user
   
   try {
-    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
+    const response = await fetch(`${API_BASE_URL}/courses/own`, {
       method: 'GET',
       credentials: 'include',
       headers: {

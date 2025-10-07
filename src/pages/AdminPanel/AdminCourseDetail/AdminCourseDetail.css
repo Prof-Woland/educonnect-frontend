@@ -534,3 +534,89 @@
     padding-bottom: 20px;
   }
 }
+
+/* Admin Course Detail Additional Styles */
+.clickable-module {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.clickable-module:hover {
+  background: #e6f3ff;
+  transform: translateX(5px);
+  border-left-color: #3b82f6;
+}
+
+.module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.module-arrow {
+  font-size: 18px;
+  color: #3b82f6;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.clickable-module:hover .module-arrow {
+  transform: translateX(3px);
+}
+
+.clickable-lesson {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+  margin: 2px 0;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clickable-lesson:hover {
+  background: #f0f7ff;
+  color: #1e3a8a;
+  transform: translateX(3px);
+}
+
+.clickable-lesson:before {
+  content: "📖 ";
+  margin-right: 8px;
+}
+
+.clickable-lesson:hover:before {
+  content: "👉 ";
+}
+
+.lesson-content-indicator {
+  font-size: 12px;
+  color: #10b981;
+  margin-left: 8px;
+}
+
+/* Admin specific styles */
+.admin-course-detail .module {
+  border-left: 4px solid #3b82f6;
+}
+
+.admin-course-detail .clickable-module:hover {
+  background: #f0f9ff;
+  border-left-color: #1e3a8a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .clickable-lesson {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .lesson-content-indicator {
+    align-self: flex-end;
+  }
+}

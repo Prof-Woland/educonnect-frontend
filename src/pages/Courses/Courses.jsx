@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import CourseCard from '../../components/CourseCard/CourseCard';
 import Cookies from 'js-cookie';
-import coursesData from '../../data/coursesData';
 import './Courses.css';
+
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
 function Courses() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -122,7 +123,7 @@ function Courses() {
 
 async function getAll(){
   try {
-    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses', {
+    const response = await fetch(`${API_BASE_URL}/courses`, {
       method: 'GET',
       credentials: 'include',
       headers: {

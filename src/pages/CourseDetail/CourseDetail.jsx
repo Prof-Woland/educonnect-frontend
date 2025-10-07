@@ -7,12 +7,16 @@ import { useEffect } from 'react';
 import { refresh } from '../../context/AuthContext'
 import { useAuth } from '../../context/AuthContext';
 
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+
 function CourseDetail(props) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [course, setCourse] = useState(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(false);
   const uri = '../../../default.jpg'
   let user, token, level
   let isAuth = false;
@@ -34,6 +38,11 @@ function CourseDetail(props) {
         const data = await getOne(id);
         console.log(data)
         setCourse(data);
+        
+        // Проверяем запись на курс, если пользователь авторизован
+        if (isAuth) {
+          await checkEnrollment(id, token);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -43,11 +52,165 @@ function CourseDetail(props) {
 
     fetchCourses();
   }, [id]);
+
+  // Функция проверки записи на курс
+  const checkEnrollment = async (courseId, userToken) => {
+  try {
+    setCheckingEnrollment(true);
+    const response = await fetch(`${API_BASE_URL}/courses/check-enrollment/${courseId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userToken.accessToken}`
+      },
+    });
+    
+    console.log('Enrollment check response status:', response.status);
+    
+    if (!response.ok) {
+      // Если статус 404 - пользователь не записан, это нормально
+      if (response.status === 404) {
+        console.log('User is not enrolled in the course');
+        setIsEnrolled(false);
+        return false;
+      }
+      
+      if (response.status === 401) {
+        console.log('Token expired, refreshing...');
+        if (user) {
+          await refresh(user.id);
+        }
+        // После обновления токена можно повторить запрос, но пока просто возвращаем false
+        setIsEnrolled(false);
+        return false;
+      }
+      
+      // Для других ошибок пробуем получить текст ошибки
+      let errorText;
+      try {
+        errorText = await response.text();
+        // Если получили текст, пробуем распарсить как JSON
+        if (errorText) {
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } catch (parseError) {
+        // Если не удалось распарсить как JSON, используем текст как есть
+        throw new Error(errorText || `HTTP error! status: ${response.status}`);
+      }
+    }
+    
+    // Если ответ успешный, пробуем получить данные
+    let data;
+    try {
+      const responseText = await response.text();
+      console.log('Enrollment check response text:', responseText);
+      
+      if (responseText) {
+        data = JSON.parse(responseText);
+      } else {
+        // Пустой ответ - считаем, что пользователь не записан
+        console.log('Empty response, assuming not enrolled');
+        setIsEnrolled(false);
+        return false;
+      }
+    } catch (parseError) {
+      console.error('Error parsing enrollment response:', parseError);
+      setIsEnrolled(false);
+      return false;
+    }
+    
+    console.log('Enrollment data:', data);
+    setIsEnrolled(data.isRecorded || false);
+    return data.isRecorded || false;
+    
+  } catch (error) {
+    console.error('Error checking enrollment:', error);
+    setIsEnrolled(false);
+    return false;
+  } finally {
+    setCheckingEnrollment(false);
+  }
+};
+
+  // Функция для перехода к странице модуля
+  const handleModuleClick = async (moduleId, moduleIndex) => {
+    // Если пользователь не авторизован, перенаправляем на страницу входа
+    if (!isAuth) {
+      navigate('/login');
+      return;
+    }
+
+    // Проверяем запись на курс
+    if (!isEnrolled) {
+      const enrollConfirmed = window.confirm(
+        'Вы не записаны на этот курс. Хотите записаться сейчас?'
+      );
+      
+      if (enrollConfirmed) {
+        await handleEnroll();
+      }
+      return;
+    }
+
+    // Если пользователь записан, переходим к модулю
+    const curriculum = generateCurriculum(course);
+    const module = curriculum[moduleIndex];
+    
+    navigate(`/courses/${id}/modules/${moduleId}`, { 
+      state: { 
+        moduleIndex,
+        courseName: course?.name,
+        moduleTitle: module?.title
+      }
+    });
+  };
+
+  // Функция для перехода к странице лекции
+  const handleLessonClick = async (lessonId, moduleIndex, lessonIndex) => {
+    // Если пользователь не авторизован, перенаправляем на страницу входа
+    if (!isAuth) {
+      navigate('/login');
+      return;
+    }
+
+    // Проверяем запись на курс
+    if (!isEnrolled) {
+      const enrollConfirmed = window.confirm(
+        'Вы не записаны на этот курс. Хотите записаться сейчас?'
+      );
+      
+      if (enrollConfirmed) {
+        await handleEnroll();
+      }
+      return;
+    }
+
+    const curriculum = generateCurriculum(course);
+    const module = curriculum[moduleIndex];
+    const lesson = module.lessons[lessonIndex];
+    
+    navigate(`/courses/${id}/lessons/${lessonId}`, {
+      state: {
+        moduleIndex,
+        lessonIndex,
+        courseName: course?.name,
+        moduleTitle: module.title,
+        lessonTitle: lesson.title,
+        lessonContent: lesson.content,
+        lessonDuration: lesson.duration || '15 минут'
+      }
+    });
+  };
+
   // Добавляем функцию recording с navigate
   async function recording(id, token, name) {
     console.log(id);
     try {
-      const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/record`, {
+      const response = await fetch(`${API_BASE_URL}/courses/record`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -60,6 +223,8 @@ function CourseDetail(props) {
       if (!response.ok) {
         if(response.status == 409){
           window.alert(`Вы уже записались на этот курс!`);
+          setIsEnrolled(true); // Обновляем состояние, если уже записан
+          return;
         }
         if(response.status == 401){
           await refresh(user.id); // Используем user вместо userData
@@ -77,6 +242,7 @@ function CourseDetail(props) {
       }
       
       const data = await response.json();
+      setIsEnrolled(true); // Обновляем состояние после успешной записи
     
       window.alert(`Вы записались на курс: ${name}`);
       navigate('/'); // Добавляем navigate здесь
@@ -147,6 +313,8 @@ function CourseDetail(props) {
             level = "Не указан"
           }
 
+  const curriculum = generateCurriculum(course);
+
   return (
     <div className="course-detail">
       <div className="container">
@@ -186,8 +354,26 @@ function CourseDetail(props) {
               </div>
             </div>
             <div className="course-price-large">{course.cost}</div>
+            
+            {/* Статус записи на курс */}
+            {isAuth && (
+              <div className="enrollment-status">
+                {checkingEnrollment ? (
+                  <div className="enrollment-checking">Проверка записи...</div>
+                ) : isEnrolled ? (
+                  <div className="enrollment-badge enrolled">
+                    ✅ Вы записаны на этот курс
+                  </div>
+                ) : (
+                  <div className="enrollment-badge not-enrolled">
+                    📝 Вы не записаны на этот курс
+                  </div>
+                )}
+              </div>
+            )}
+            
             <button className="enroll-button-large" onClick={handleEnroll}>
-              Записаться на курс
+              {isEnrolled ? 'Вы записаны' : 'Записаться на курс'}
             </button>
           </div>
         </div>
@@ -200,13 +386,43 @@ function CourseDetail(props) {
 
           <div className="content-section">
             <h2>Программа курса</h2>
+            
+            {/* Сообщение о необходимости записи */}
+            {isAuth && !isEnrolled && !checkingEnrollment && (
+              <div className="enrollment-notice">
+                <p>Для доступа к материалам курса необходимо записаться на курс.</p>
+              </div>
+            )}
+            
             <div className="curriculum">
-              {generateCurriculum(course).map((module, index) => (
-                <div key={index} className="module">
-                  <h3>Модуль {index + 1}: {module.title}</h3>
+              {curriculum.map((module, index) => (
+                <div 
+                  key={module.id || index} 
+                  className={`module ${isEnrolled ? 'clickable-module' : 'module-disabled'}`}
+                  onClick={() => isEnrolled && handleModuleClick(module.id || `module-${index}`, index)}
+                >
+                  <div className="module-header">
+                    <h3>Модуль {index + 1}: {module.title}</h3>
+                    {isEnrolled ? (
+                      <span className="module-arrow">→</span>
+                    ) : (
+                      <span className="module-lock">🔒</span>
+                    )}
+                  </div>
                   <ul>
                     {module.lessons.map((lesson, lessonIndex) => (
-                      <li key={lessonIndex}>{lesson}</li>
+                      <li 
+                        key={lesson.id || lessonIndex} 
+                        className={isEnrolled ? 'clickable-lesson' : 'lesson-disabled'}
+                        onClick={(e) => {
+                          if (!isEnrolled) return;
+                          e.stopPropagation();
+                          handleLessonClick(lesson.id || `lesson-${index}-${lessonIndex}`, index, lessonIndex);
+                        }}
+                      >
+                        {lesson.title}
+                        {!isEnrolled && <span className="lesson-lock"> 🔒</span>}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -241,7 +457,7 @@ function getCourseAudience(level) {
 
 async function getOne(id){
   try {
-    const response = await fetch(`https://educonnect-backend-qrh6.onrender.com/courses/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/courses/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -255,7 +471,7 @@ async function getOne(id){
     }
     
     const data = await response.json();
-    Cookies.set('oneCourse', data, {expires: 0.5})
+    Cookies.set('oneCourse', JSON.stringify(data), {expires: 0.5})
     return data;
   } catch (error) {
     console.error('Error fetching course:', error);
@@ -263,52 +479,88 @@ async function getOne(id){
   }
 }
 
-
+// Обновленная функция для парсинга вашего формата данных
 function generateCurriculum(course) {
+  console.log('Course parts:', course.parts);
+  
   if (!course.parts) {
     return [{
+      id: 'default-module',
       title: 'Программа курса',
-      lessons: ['Информация о модулях будет доступна позже']
+      lessons: [{
+        id: 'default-lesson',
+        title: 'Информация о модулях будет доступна позже',
+        content: '',
+        images: []
+      }]
     }];
   }
 
   let partsData;
-  
+
   try {
-    // Пробуем разные способы парсинга
     if (typeof course.parts === 'string') {
-      // Убираем экранирование и парсим
-      const cleanJsonString = course.parts
-        .replace(/\\"/g, '"')
-        .replace(/^"|"$/g, ''); // Убираем внешние кавычки если есть
+      // Убираем экранирование и парсим JSON
+      let cleanStr = course.parts;
       
-      partsData = JSON.parse(cleanJsonString);
+      // Убираем внешние кавычки если они есть
+      if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
+        cleanStr = cleanStr.slice(1, -1);
+      }
+      
+      // Заменяем экранированные кавычки
+      cleanStr = cleanStr.replace(/\\"/g, '"');
+      
+      // Парсим JSON
+      partsData = JSON.parse(cleanStr);
     } else {
       partsData = course.parts;
     }
   } catch (parseError) {
     console.error('Parse error:', parseError);
     return [{
+      id: 'error-module',
       title: 'Программа курса',
-      lessons: ['Ошибка загрузки программы курса']
+      lessons: [{
+        id: 'error-lesson',
+        title: 'Ошибка загрузки программы курса',
+        content: '',
+        images: []
+      }]
     }];
   }
 
-  // Обрабатываем полученные данные
   if (!Array.isArray(partsData)) {
     return [{
+      id: 'empty-module',
       title: 'Программа курса',
-      lessons: ['Модули еще не добавлены']
+      lessons: [{
+        id: 'empty-lesson',
+        title: 'Модули еще не добавлены',
+        content: '',
+        images: []
+      }]
     }];
   }
 
-  return partsData.map((part) => ({
-    title: part.title || 'Модуль без названия',
-    lessons: Array.isArray(part.lessons) 
-      ? part.lessons.map(lesson => 
-          typeof lesson === 'object' ? (lesson.title || 'Без названия') : String(lesson)
-        )
-      : ['Содержание модуля будет добавлено позже']
+  // Преобразуем данные в единый формат
+  return partsData.map((module, index) => ({
+    id: module.id || `module-${index}`,
+    title: module.title || 'Модуль без названия',
+    lessons: Array.isArray(module.lessons) 
+      ? module.lessons.map((lesson, lessonIndex) => ({
+          id: lesson.id || `lesson-${index}-${lessonIndex}`,
+          title: lesson.title || 'Лекция без названия',
+          content: lesson.content || '',
+          images: lesson.images || [],
+          duration: lesson.duration || '15 минут'
+        }))
+      : [{
+          id: `empty-lesson-${index}`,
+          title: 'Содержание модуля будет добавлено позже',
+          content: '',
+          images: []
+        }]
   }));
 }
 

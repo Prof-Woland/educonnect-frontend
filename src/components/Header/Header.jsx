@@ -40,6 +40,7 @@ function Header() {
             <Link to="/courses">Курсы</Link>
             <Link to="/community">Сообщество</Link>
             {(role == 'teacher'||role == 'admin')?(<Link to="/create-course">Создать курс</Link>): null}
+            {(role == 'teacher'||role == 'admin')?(<Link to="/admin/courses-management">Курсы преподавателя</Link>): null}
             {(role == 'admin')?(<Link to="/admin">Админ. панель</Link>): null}
             {user ? (
               <>

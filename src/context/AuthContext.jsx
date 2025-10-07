@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+
 export function useAuth() {
   return useContext(AuthContext);
 }
@@ -42,7 +44,7 @@ export function AuthProvider(props) {
   // Реальный API запрос для авторизации
   async function login(email, password) {
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/authorization', {
+      const response = await fetch(`${API_BASE_URL}/auth/authorization`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -68,7 +70,7 @@ export function AuthProvider(props) {
   // Реальный API запрос для регистрации
   async function register(name, email, password) {
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/registration', {
+      const response = await fetch(`${API_BASE_URL}/auth/registration`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -97,7 +99,7 @@ export function AuthProvider(props) {
     if(window.confirm('Вы точно хотите выйти из аккаунта?')){
       try {
         const token = JSON.parse(Cookies.get('token'));
-        await fetch('https://educonnect-backend-qrh6.onrender.com/auth/logout', { 
+        await fetch(`${API_BASE_URL}/auth/logout`, { 
           method: 'POST',
           credentials: 'include',
           headers: {
@@ -117,15 +119,17 @@ export function AuthProvider(props) {
 
   // API запрос для обновления профиля
   async function updateProfile(profileData) {
+    console.log(profileData)
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
+      const token = JSON.parse(Cookies.get('token'));
+      const response = await fetch(`${API_BASE_URL}/auth/update`, {
+        method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userData.tokens}`
+          'Authorization': `Bearer ${token.accessToken}`
         },
-        body: JSON.stringify(profileData)
+        body: JSON.stringify({login:profileData.login, email:profileData.email, phone:profileData.phone})
       });
       
       if (!response.ok) {
@@ -135,7 +139,7 @@ export function AuthProvider(props) {
       
       const updatedUser = await response.json();
       setCurrentUser(updatedUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      Cookies.set('user', JSON.stringify(updatedUser), {expires: 0.292})
       return updatedUser;
     } catch (error) {
       throw new Error(error.message);
@@ -162,7 +166,7 @@ export function AuthProvider(props) {
 
 export async function refresh(id){
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/auth/refresh', {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
         headers: {

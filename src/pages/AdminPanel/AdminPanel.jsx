@@ -5,10 +5,9 @@ import MetricsDashboard from '../../components/Admin/MetricsDashboard';
 import '../../components/Admin/AdminPanel.css';
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState('metrics');
+  const [activeTab, setActiveTab] = useState('users');
 
   const tabs = [
-    { id: 'metrics', label: '📊 Метрики' },
     { id: 'users', label: '👥 Пользователи' },
     { id: 'courses', label: '📚 Модерация курсов' }
   ];
@@ -17,7 +16,6 @@ const AdminPanel = () => {
     switch(activeTab) {
       case 'users': return <UserManagement />;
       case 'courses': return <CourseModeration />;
-      case 'metrics': return <MetricsDashboard />;
       default: return <MetricsDashboard />;
     }
   };

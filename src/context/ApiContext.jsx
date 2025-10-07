@@ -3,6 +3,7 @@ import { refresh } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+
 // Users API
 export const adminAPI = {
   // User Management
@@ -44,7 +45,7 @@ export const adminAPI = {
         token = JSON.parse(Cookies.get('token'))
         user = JSON.parse(Cookies.get('user'))
     }catch{}
-    const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/role`, {
+    const response = await fetch(`${API_BASE_URL}/admin/roles/${userId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -121,6 +122,35 @@ export const adminAPI = {
             throw new Error(errorData.message);
     }
     return {pending: await response.json(), published: await responseAll.json()};
+  },
+
+  publishCourse: async (courseId) => {
+    const response = await fetch(`${API_BASE_URL}/admin/courses/publish/${courseId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${JSON.parse(Cookies.get('token')).accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+            if(response.status == 401){
+              await refresh(user.id); // Используем user вместо userData
+            }
+            const errorData = await response.json();
+            if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
+              ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
+              ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
+              ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
+              ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
+              Cookies.remove('user');
+              Cookies.remove('token');
+              useNavigate('/login')
+            }
+            throw new Error(errorData.message);
+    }
+    
+    return response.json();
   },
 
   moderateCourse: async (courseId, action, feedback = '') => {
@@ -215,5 +245,52 @@ export const adminAPI = {
             throw new Error(errorData.message);
     }
     return response.json();
-  }
+  },
+
+  deleteUser: async (id) => {
+    let token
+    try{
+        token = JSON.parse(Cookies.get('token'))
+    }catch{}
+    const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token.accessToken}`
+      }
+    });
+        if (!response.ok) {
+            if(response.status == 401){
+              await refresh(user.id); // Используем user вместо userData
+            }
+            const errorData = await response.json();
+            if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
+              ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
+              ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
+              ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
+              ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
+              Cookies.remove('user');
+              Cookies.remove('token');
+              useNavigate('/login')
+            }
+            throw new Error(errorData.message);
+    }
+    return response.json();
+  },
+
+  getAllCourses: async (email) => {
+    const response = await fetch(`${API_BASE_URL}/courses/status/all`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${JSON.parse(Cookies.get('token')).accessToken}`,
+        'Content-Type': 'application/json'
+      },
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+    
+    return response.json();
+  },
 };

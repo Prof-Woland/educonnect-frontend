@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './CreateCourse.css';
 
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+
 function CreateCourse() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -172,7 +174,7 @@ function CreateCourse() {
     try {
       console.log(courseData.level)
       const token = JSON.parse(Cookies.get('token'));
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/create', {
+      const response = await fetch(`${API_BASE_URL}/courses/create`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -204,7 +206,7 @@ function CreateCourse() {
       
       // Через 2 секунды перенаправляем на страницу курса
       setTimeout(() => {
-        navigate(`/course/${result.id}`);
+        navigate(`/account`);
       }, 1000);
 
     } catch (error) {
@@ -325,7 +327,7 @@ function CreateCourse() {
                 <input
                     type="email"
                     name="teacherEmail"
-                    value={courseData.teacherEmail}
+                    value={courseData.teacher}
                     onChange={handleInputChange}
                     placeholder="email@example.com"
                     required

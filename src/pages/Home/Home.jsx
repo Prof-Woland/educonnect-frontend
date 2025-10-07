@@ -4,8 +4,8 @@ import './Home.css';
 import Cookies from 'js-cookie';
 import CourseCard from '../../components/CourseCard/CourseCard'
 import {refresh} from '../../context/AuthContext'
-import coursesData from '../../data/coursesData';
 
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 const Home = () => {
   const [popularCourses, setPopularCourses] = useState([]);
   const [userCourses, setUserCourses] = useState([]);
@@ -138,7 +138,7 @@ async function getPopular(){
   // if(!cookieData)
   // {
   try {
-    const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/popular', {
+    const response = await fetch(`${API_BASE_URL}/courses/popular`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -189,7 +189,7 @@ async function getOwn(){
     const token = JSON.parse(Cookies.get('token'));
     const userData = JSON.parse(Cookies.get('user'));
     try {
-      const response = await fetch('https://educonnect-backend-qrh6.onrender.com/courses/own', {
+      const response = await fetch(`${API_BASE_URL}/courses/own`, {
         method: 'GET',
         credentials: 'include',
         headers: {

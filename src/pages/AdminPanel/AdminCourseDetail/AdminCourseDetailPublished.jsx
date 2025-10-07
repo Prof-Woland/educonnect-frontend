@@ -7,17 +7,13 @@ import { refresh } from '../../../context/AuthContext';
 
 const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
-function AdminCourseDetail() {
+function AdminCourseDetailPublished() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [course, setCourse] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isTeacher, setIsTeacher] = useState(false);
-  const [moderatorComments, setModeratorComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
-  const [curriculum, setCurriculum] = useState([]);
   const uri = '../../../default.jpg';
 
   // Проверка прав администратора
@@ -33,22 +29,14 @@ function AdminCourseDetail() {
         }
 
         // Проверяем роль пользователя
-        if (user.role !== 'admin' && user.role !== 'teacher') {
+        if (user.role !== 'admin' && user.role !== 'moderator') {
           setError('Недостаточно прав для просмотра этой страницы');
           setIsAdmin(false);
-          setIsTeacher(false);
           return;
         }
 
         setIsAdmin(true);
-
-        if (user.role == 'teacher') {
-          setIsTeacher(true);
-          setIsAdmin(false);
-        }
-
         await fetchCourseData(id, token);
-        await fetchModeratorComments(id, token);
       } catch (err) {
         console.error('Error checking admin rights:', err);
         setError('Ошибка проверки прав доступа');
@@ -66,10 +54,6 @@ function AdminCourseDetail() {
       const data = await getOne(courseId, token);
       console.log('Course data:', data);
       setCourse(data);
-      
-      // Генерируем учебный план
-      const curriculumData = generateCurriculum(data);
-      setCurriculum(curriculumData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,96 +61,7 @@ function AdminCourseDetail() {
     }
   };
 
-  // Функция загрузки комментариев модераторов
-  const fetchModeratorComments = async (courseId, token) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/admin/pending/comments/${courseId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token.accessToken}`
-        },
-      });
-      
-      if (!response.ok) {
-              if(response.status == 409){
-                window.alert(`Вы уже записались на этот курс!`);
-              }
-              if(response.status == 401){
-                await refresh(user.id);
-              }
-              const errorData = await response.json();
-              if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
-                ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
-                ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
-                ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
-                ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
-                Cookies.remove('user');
-                Cookies.remove('token');
-              }
-              throw new Error(errorData.message);
-            }
-      
-      const data = await response.json();
-      setModeratorComments(data || []);
-    } catch (error) {
-      console.error('Error fetching moderator comments:', error);
-    }
-  };
-
-  // Функция добавления нового комментария
-  const handleAddComment = async () => {
-    if (!newComment.trim()) {
-      alert('Введите текст комментария');
-      return;
-    }
-
-    try {
-      const token = JSON.parse(Cookies.get('token') || '{}');
-      const user = JSON.parse(Cookies.get('user') || '{}');
-      
-      const response = await fetch(`http://localhost:3000/admin/addComment`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token.accessToken}`
-        },
-        body: JSON.stringify({ 
-          comment: newComment,
-          id: course.id
-        })
-      });
-
-      if (!response.ok) {
-              if(response.status == 409){
-                window.alert(`Вы уже записались на этот курс!`);
-              }
-              if(response.status == 401){
-                await refresh(user.id);
-              }
-              const errorData = await response.json();
-              if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
-                ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
-                ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
-                ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
-                ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
-                Cookies.remove('user');
-                Cookies.remove('token');
-              }
-              throw new Error(errorData.message);
-            }
-
-      const data = await response.json();
-      setNewComment('');
-      await fetchModeratorComments(id, token);
-      alert('Комментарий успешно добавлен');
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      alert(`Ошибка при добавлении комментария: ${error.message}`);
-    }
-  };
+  // Функция загрузки комментариев модераторо
 
   // Функция одобрения курса
   const handleApproveCourse = async () => {
@@ -180,10 +75,7 @@ function AdminCourseDetail() {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token.accessToken}`
-        },
-        body:JSON.stringify({
-          status:'approved'
-        })
+        }
       });
 
      if (!response.ok) {
@@ -191,7 +83,7 @@ function AdminCourseDetail() {
                window.alert(`Вы уже записались на этот курс!`);
              }
              if(response.status == 401){
-               await refresh(user.id);
+               await refresh(user.id); // Используем user вместо userData
              }
              const errorData = await response.json();
              if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
@@ -206,8 +98,8 @@ function AdminCourseDetail() {
            }
 
       const data = await response.json();
-      window.alert('Курс успешно одобрен');
-      navigate('/admin');
+      window.alert('Курс успешно одобрен и опубликован');
+      navigate('/admin'); // Возвращаемся к списку курсов
     } catch (error) {
       console.error('Error approving course:', error);
       window.alert(`Ошибка при одобрении курса: ${error.message}`);
@@ -217,7 +109,7 @@ function AdminCourseDetail() {
   // Функция отклонения курса
   const handleRejectCourse = async () => {
     const feedback = window.prompt('Укажите причину отклонения курса:');
-    if (feedback === null) return;
+    if (feedback === null) return; // Пользователь отменил ввод
 
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
@@ -228,9 +120,7 @@ function AdminCourseDetail() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token.accessToken}`
         },
-        body:JSON.stringify({
-          status:'rejected'
-        })
+        body: JSON.stringify({ feedback })
       });
 
       if (!response.ok) {
@@ -238,7 +128,7 @@ function AdminCourseDetail() {
                 window.alert(`Вы уже записались на этот курс!`);
               }
               if(response.status == 401){
-                await refresh(user.id);
+                await refresh(user.id); // Используем user вместо userData
               }
               const errorData = await response.json();
               if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
@@ -254,7 +144,7 @@ function AdminCourseDetail() {
 
       const data = await response.json();
       window.alert('Курс отклонен');
-      navigate('/admin');
+      navigate('/admin'); // Возвращаемся к списку курсов
     } catch (error) {
       console.error('Error rejecting course:', error);
       window.alert(`Ошибка при отклонении курса: ${error.message}`);
@@ -280,7 +170,7 @@ function AdminCourseDetail() {
                 window.alert(``);
               }
               if(response.status == 401){
-                await refresh(user.id);
+                await refresh(user.id); // Используем user вместо userData
               }
               const errorData = await response.json();
               if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
@@ -295,41 +185,11 @@ function AdminCourseDetail() {
             }
 
       window.alert('Курс успешно удален');
-      navigate('/admin');
+      navigate('/admin'); // Возвращаемся к списку курсов
     } catch (error) {
       console.error('Error deleting course:', error);
       window.alert(`Ошибка при удалении курса: ${error.message}`);
     }
-  };
-
-  // Функции для навигации по модулям и урокам
-  const handleModuleClick = (moduleId, moduleIndex) => {
-    navigate(`/admin/courses/${id}/modules/${moduleId}`, { 
-      state: { 
-        moduleIndex,
-        courseName: course?.name,
-        moduleTitle: curriculum[moduleIndex]?.title,
-        isAdmin: true
-      }
-    });
-  };
-
-  const handleLessonClick = (lessonId, moduleIndex, lessonIndex) => {
-    const module = curriculum[moduleIndex];
-    const lesson = module.lessons[lessonIndex];
-    
-    navigate(`/admin/courses/${id}/lessons/${lessonId}`, {
-      state: {
-        moduleIndex,
-        lessonIndex,
-        courseName: course?.name,
-        moduleTitle: module.title,
-        lessonTitle: lesson.title,
-        lessonContent: lesson.content,
-        lessonDuration: lesson.duration || '15 минут',
-        isAdmin: true
-      }
-    });
   };
 
   // Показываем загрузку
@@ -344,7 +204,7 @@ function AdminCourseDetail() {
   }
 
   // Показываем ошибку доступа
-  if (error && !isAdmin && !isTeacher) {
+  if (error && !isAdmin) {
     return (
       <div className="course-detail">
         <div className="container">
@@ -421,6 +281,8 @@ function AdminCourseDetail() {
     default:
       statusBadge = <span className="status-badge unknown">Неизвестен</span>;
   }
+
+  console.log(course)
 
   return (
     <div className="course-detail admin-course-detail">
@@ -528,35 +390,15 @@ function AdminCourseDetail() {
             <p>{course.detailDescription || 'Подробное описание отсутствует'}</p>
           </div>
 
-          {/* Программа курса с возможностью просмотра модулей и уроков */}
           <div className="content-section">
             <h2>Программа курса</h2>
             <div className="curriculum">
-              {curriculum.map((module, index) => (
-                <div 
-                  key={module.id || index} 
-                  className="module clickable-module"
-                  onClick={() => handleModuleClick(module.id || `module-${index}`, index)}
-                >
-                  <div className="module-header">
-                    <h3>Модуль {index + 1}: {module.title}</h3>
-                    <span className="module-arrow">→</span>
-                  </div>
+              {generateCurriculum(course).map((module, index) => (
+                <div key={index} className="module">
+                  <h3>Модуль {index + 1}: {module.title}</h3>
                   <ul>
                     {module.lessons.map((lesson, lessonIndex) => (
-                      <li 
-                        key={lesson.id || lessonIndex} 
-                        className="clickable-lesson"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLessonClick(lesson.id || `lesson-${index}-${lessonIndex}`, index, lessonIndex);
-                        }}
-                      >
-                        {lesson.title}
-                        {lesson.content && (
-                          <span className="lesson-content-indicator" title="Есть содержимое"> 📄</span>
-                        )}
-                      </li>
+                      <li key={lessonIndex}>{lesson}</li>
                     ))}
                   </ul>
                 </div>
@@ -581,54 +423,7 @@ function AdminCourseDetail() {
           </div>
 
           {/* Комментарии модераторов */}
-          <div className="content-section moderator-comments">
-            <h2>Комментарии модераторов</h2>
-            
-            {isAdmin ? (
-              <div className="add-comment-form">
-                <h3>Добавить комментарий</h3>
-                <textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Введите ваш комментарий..."
-                  className="comment-textarea"
-                  rows="4"
-                />
-                <button 
-                  onClick={handleAddComment}
-                  className="btn-add-comment"
-                  disabled={!newComment.trim()}
-                >
-                  Добавить комментарий
-                </button>
-              </div>
-            ) : (
-              <div></div>
-            )}
 
-            {/* Список комментариев */}
-            <div className="comments-list">
-              {moderatorComments.length > 0 ? (
-                moderatorComments.map((comment, index) => (
-                  <div key={comment.id || index} className="comment-item">
-                    <div className="comment-header">
-                      <span className="comment-author">{comment.adminEmail || 'Модератор'}</span>
-                      <span className="comment-date">
-                        {comment.createdAt ? new Date(comment.createdAt).toLocaleString('ru-RU') : 'Неизвестно'}
-                      </span>
-                    </div>
-                    <div className="comment-content">
-                      {comment.text}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="no-comments">
-                  <p>Пока нет комментариев от модераторов</p>
-                </div>
-              )}
-            </div>
-          </div>
 
           {/* Дополнительная информация для админа */}
           <div className="content-section admin-info">
@@ -674,16 +469,6 @@ function AdminCourseDetail() {
                   <span className="value">{course.rejectionReason}</span>
                 </div>
               )}
-              <div className="meta-item">
-                <span className="label">Модулей:</span>
-                <span className="value">{curriculum.length}</span>
-              </div>
-              <div className="meta-item">
-                <span className="label">Всего уроков:</span>
-                <span className="value">
-                  {curriculum.reduce((total, module) => total + module.lessons.length, 0)}
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -709,7 +494,7 @@ async function getOne(id, token) {
               window.alert(`Вы уже записались на этот курс!`);
             }
             if(response.status == 401){
-              await refresh(user.id);
+              await refresh(user.id); // Используем user вместо userData
             }
             const errorData = await response.json();
             if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
@@ -731,82 +516,48 @@ async function getOne(id, token) {
   }
 }
 
-// Улучшенная функция для парсинга учебного плана
 function generateCurriculum(course) {
-  console.log('Raw course.parts:', course.parts);
-  
   if (!course.parts) {
     return [{
-      id: 'default-module',
       title: 'Программа курса',
-      lessons: [{
-        id: 'default-lesson',
-        title: 'Информация о модулях будет доступна позже',
-        content: '',
-        images: []
-      }]
+      lessons: ['Информация о модулях будет доступна позже']
     }];
   }
 
   let partsData;
-
+  
   try {
     if (typeof course.parts === 'string') {
-      let cleanStr = course.parts;
+      const cleanJsonString = course.parts
+        .replace(/\\"/g, '"')
+        .replace(/^"|"$/g, '');
       
-      if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
-        cleanStr = cleanStr.slice(1, -1);
-      }
-      
-      cleanStr = cleanStr.replace(/\\"/g, '"');
-      partsData = JSON.parse(cleanStr);
+      partsData = JSON.parse(cleanJsonString);
     } else {
       partsData = course.parts;
     }
   } catch (parseError) {
     console.error('Parse error:', parseError);
     return [{
-      id: 'error-module',
       title: 'Программа курса',
-      lessons: [{
-        id: 'error-lesson',
-        title: 'Ошибка загрузки программы курса',
-        content: '',
-        images: []
-      }]
+      lessons: ['Ошибка загрузки программы курса']
     }];
   }
 
   if (!Array.isArray(partsData)) {
     return [{
-      id: 'empty-module',
       title: 'Программа курса',
-      lessons: [{
-        id: 'empty-lesson',
-        title: 'Модули еще не добавлены',
-        content: '',
-        images: []
-      }]
+      lessons: ['Модули еще не добавлены']
     }];
   }
 
-  return partsData.map((module, index) => ({
-    id: module.id || `module-${index}`,
-    title: module.title || 'Модуль без названия',
-    lessons: Array.isArray(module.lessons) 
-      ? module.lessons.map((lesson, lessonIndex) => ({
-          id: lesson.id || `lesson-${index}-${lessonIndex}`,
-          title: lesson.title || 'Лекция без названия',
-          content: lesson.content || '',
-          images: lesson.images || [],
-          duration: lesson.duration || '15 минут'
-        }))
-      : [{
-          id: `empty-lesson-${index}`,
-          title: 'Содержание модуля будет добавлено позже',
-          content: '',
-          images: []
-        }]
+  return partsData.map((part) => ({
+    title: part.title || 'Модуль без названия',
+    lessons: Array.isArray(part.lessons) 
+      ? part.lessons.map(lesson => 
+          typeof lesson === 'object' ? (lesson.title || 'Без названия') : String(lesson)
+        )
+      : ['Содержание модуля будет добавлено позже']
   }));
 }
 
@@ -820,4 +571,4 @@ function getInstructorBio(category) {
   }
 }
 
-export default AdminCourseDetail;
+export default AdminCourseDetailPublished;
