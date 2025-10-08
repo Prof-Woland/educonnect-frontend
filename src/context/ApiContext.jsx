@@ -156,7 +156,7 @@ export const adminAPI = {
   unpublishCourse: async (courseId) => {
         try {
           const token = JSON.parse(Cookies.get('token') || '{}');
-          const response = await fetch(`${API_URI}/admin/pending/approve/${courseId}`, {
+          const response = await fetch(`${API_BASE_URL}/admin/pending/approve/${courseId}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
