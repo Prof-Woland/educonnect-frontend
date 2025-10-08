@@ -1,6 +1,7 @@
 // src/pages/LessonDetail.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './CourseDetail.css';
 
 const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
