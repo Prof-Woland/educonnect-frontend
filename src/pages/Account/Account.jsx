@@ -50,7 +50,7 @@ function Account() {
   const calculateCourseProgress = (course) => {
     // Находим прогресс для этого курса
     const courseProgress = myProgress.find(p => p.courseId === course.id);
-    const myCourse = myCourses.find(p => p.courseId === course.id)
+    const myCourse = myCourses.find(item => item.id === course.id);
     
     if (!courseProgress) return 0;
 
