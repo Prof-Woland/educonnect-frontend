@@ -41,6 +41,10 @@ function CreateCourse() {
     teacher: user?.email || '' 
   });
 
+  // Подсчет количества модулей и лекций
+  const totalModules = modules.length;
+  const totalLectures = modules.reduce((total, module) => total + module.lessons.length, 0);
+
   // Проверка формата продолжительности
   const validateDuration = (duration) => {
     if (!duration.trim()) return true; // Пустое поле - допустимо
@@ -217,7 +221,9 @@ function CreateCourse() {
           category: courseData.category,
           detailDescription: courseData.detailDescription,
           parts: JSON.stringify(modules),
-          teacher: courseData.teacher// ID преподавателя/админа
+          teacher: courseData.teacher,
+          modules: totalModules,
+          lessons: totalLectures
         })
       });
 
@@ -373,7 +379,12 @@ function CreateCourse() {
           {/* Модули курса */}
           <div className="form-section">
             <div className="section-header">
-              <h2>Модули курса</h2>
+              <div className="section-title-with-counter">
+                <h2>Модули курса</h2>
+                <div className="counter-badge">
+                  Модули: {totalModules} | Лекции: {totalLectures}
+                </div>
+              </div>
               <button type="button" onClick={addModule} className="add-button">
                 + Добавить модуль
               </button>
@@ -382,13 +393,18 @@ function CreateCourse() {
             {modules.map((module, moduleIndex) => (
               <div key={module.id} className="module-card">
                 <div className="module-header">
-                  <input
-                    type="text"
-                    value={module.title}
-                    onChange={(e) => updateModule(moduleIndex, 'title', e.target.value)}
-                    placeholder="Название модуля"
-                    className="module-title"
-                  />
+                  <div className="module-title-with-counter">
+                    <input
+                      type="text"
+                      value={module.title}
+                      onChange={(e) => updateModule(moduleIndex, 'title', e.target.value)}
+                      placeholder="Название модуля"
+                      className="module-title"
+                    />
+                    <span className="module-lecture-counter">
+                      Лекций: {module.lessons.length}
+                    </span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeModule(moduleIndex)}
@@ -401,7 +417,17 @@ function CreateCourse() {
                 <div className="lectures-list">
                   {module.lessons.map((lecture, lectureIndex) => (
                     <div key={lecture.id} className="lecture-item">
-                      <span>{lecture.title}</span>
+                      <span className="lecture-title">{lecture.title}</span>
+                      {lecture.content && (
+                        <span className="lecture-content-indicator" title="Есть содержание">
+                          📝
+                        </span>
+                      )}
+                      {lecture.images && lecture.images.length > 0 && (
+                        <span className="lecture-images-indicator" title={`${lecture.images.length} изображений`}>
+                          🖼️{lecture.images.length}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -411,14 +437,43 @@ function CreateCourse() {
                   onClick={() => openLectureModal(moduleIndex)}
                   className="add-lecture-button"
                 >
-                  + Добавить лекцию
+                  + Добавить лекцию ({module.lessons.length})
                 </button>
               </div>
             ))}
+
+            {modules.length === 0 && (
+              <div className="empty-state">
+                <p>Пока нет добавленных модулей. Нажмите "Добавить модуль", чтобы начать.</p>
+              </div>
+            )}
           </div>
 
-          <button type="submit" disabled={loading} className="submit-button">
-            {loading ? 'Создание...' : 'Создать курс'}
+          <div className="form-summary">
+            <div className="summary-stats">
+              <div className="stat-item">
+                <span className="stat-label">Всего модулей:</span>
+                <span className="stat-value">{totalModules}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Всего лекций:</span>
+                <span className="stat-value">{totalLectures}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Среднее лекций на модуль:</span>
+                <span className="stat-value">
+                  {totalModules > 0 ? (totalLectures / totalModules).toFixed(1) : 0}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading || totalModules === 0 || totalLectures === 0} 
+            className="submit-button"
+          >
+            {loading ? 'Создание...' : `Создать курс (${totalModules} модулей, ${totalLectures} лекций)`}
           </button>
         </form>
       </div>
@@ -428,7 +483,7 @@ function CreateCourse() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Добавить лекцию</h3>
+              <h3>Добавить лекцию в модуль</h3>
               <button onClick={closeLectureModal} className="close-button">
                 ×
               </button>
