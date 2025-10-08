@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
 export function useAuth() {
   return useContext(AuthContext);

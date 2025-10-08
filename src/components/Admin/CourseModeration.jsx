@@ -4,7 +4,7 @@ import { adminAPI } from '../../context/ApiContext';
 import Cookies from 'js-cookie';
 import './AdminPanel.css';
 
-const API_URI = 'http://localhost:3000';
+const API_URI = 'https://educonnect-backend-qrh6.onrender.com';
 const uri = '../../../default.jpg'
 
 const CourseModeration = () => {

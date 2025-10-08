@@ -5,7 +5,7 @@ import { adminAPI } from '../../context/ApiContext';
 import Cookies from 'js-cookie';
 import './CourseManagement.css';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
 const CourseManagementPage = () => {
   const [courses, setCourses] = useState([]);

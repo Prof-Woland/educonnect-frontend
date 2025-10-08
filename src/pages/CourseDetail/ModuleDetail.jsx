@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './CourseDetail.css';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
 function ModuleDetail() {
   const { courseId, moduleId } = useParams();
