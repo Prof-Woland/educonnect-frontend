@@ -186,7 +186,6 @@ export const adminAPI = {
     
           const data = await response.json();
           const newc = await adminAPI.getPendingCourses();
-          setPendingCourses(newc.pending || []);
           navigate('/admin'); // Возвращаемся к списку курсов
         } catch (error) {
           console.error('Error unpublishing course:', error);
