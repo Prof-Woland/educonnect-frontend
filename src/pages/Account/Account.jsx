@@ -59,6 +59,7 @@ function Account() {
     let totalLessons = 0;
     console.log(courseProgress)
     console.log(course.id)
+    console.log(myCourse)
     console.log(myCourses)
     console.log(myProgress)
     try {
