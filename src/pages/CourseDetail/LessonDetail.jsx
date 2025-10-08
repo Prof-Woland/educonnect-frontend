@@ -10,7 +10,7 @@ const handleComplete = async (id) => {
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
       const response = await fetch(`${API_BASE_URL}/courses/complete/${id}`, {
-        method: 'POST',
+        method: 'GET',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
