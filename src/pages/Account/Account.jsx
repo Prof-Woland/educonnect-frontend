@@ -16,6 +16,7 @@ function Account() {
   const navigate = useNavigate()
   const { currentUser, loading } = auth;
   const [myCourses, setMyCourses] = useState([])
+  const [myCompleted, setMyCompleted] = useState([])
   const [userData, setUserData] = useState('')
   const user = JSON.parse(Cookies.get('user'));
 
@@ -38,7 +39,8 @@ function Account() {
         });
       }
       const data = await getOwn();
-      setMyCourses(data)
+      setMyCourses(data.courses)
+      setMyCompleted(data.completed)
     }
     
     fetchData();
@@ -231,6 +233,7 @@ async function getOwn(){
     }
     
     const data = await response.json();
+    console.log(data)
     
     if (!Array.isArray(data)) {
       console.warn('API returned non-array data:', data);
