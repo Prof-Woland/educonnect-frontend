@@ -426,7 +426,7 @@ function AdminCourseDetail() {
     <div className="course-detail admin-course-detail">
       <div className="container">
         <div className="admin-header-actions">
-          <button onClick={() => navigate('/admin')} className="back-button">
+          <button onClick={() => navigate("/admin/courses-management")} className="back-button">
             ← Назад к списку курсов
           </button>
           <div className="course-status-info">
