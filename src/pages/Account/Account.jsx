@@ -57,16 +57,9 @@ function Account() {
     // Получаем общее количество уроков в курсе
     // Предполагаем, что в course.parts хранится структура модулей и уроков
     let totalLessons = 0;
-    console.log(courseProgress)
-    console.log(course.id)
-    console.log(myCourse)
-    console.log(myCourses)
-    console.log(myProgress)
     try {
       if (course.parts) {
-        const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
         totalLessons = myCourse.lessons
-        console.log(lessons)
       }
     } catch (error) {
       console.error('Error parsing course parts:', error);
