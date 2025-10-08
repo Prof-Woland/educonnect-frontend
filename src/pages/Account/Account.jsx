@@ -58,7 +58,7 @@ function Account() {
     // Предполагаем, что в course.parts хранится структура модулей и уроков
     let totalLessons = 0;
     console.log(courseProgress)
-    console.log(myCourse)
+    console.log(course.id)
     console.log(myCourses)
     console.log(myProgress)
     try {
