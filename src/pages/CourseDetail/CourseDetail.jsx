@@ -470,25 +470,7 @@ async function getOne(id){
   }
 }
 
-function isValidJSON(str) {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch (e) {
-    console.error('JSON validation error:', e.message);
-    console.log('Error position:', e.position);
-    if (str && e.position) {
-      console.log('Context around error:', 
-        str.substring(Math.max(0, e.position - 50), Math.min(str.length, e.position + 50))
-      );
-    }
-    return false;
-  }
-}
-
-
 // Обновленная функция для парсинга вашего формата данных
-// Улучшенная функция для парсинга данных с обработкой ошибок
 function generateCurriculum(course) {
   console.log('Course parts:', course.parts);
   
@@ -505,47 +487,43 @@ function generateCurriculum(course) {
     }];
   }
 
-  if (typeof course.parts === 'string' && !isValidJSON(course.parts)) {
-    console.log('JSON is invalid, trying to fix...');
-    // ... остальной код
-  }
-
   let partsData;
 
   try {
     if (typeof course.parts === 'string') {
-      // Очистка и подготовка JSON строки
-      let cleanStr = cleanJSONString(course.parts);
-      console.log('Cleaned JSON string:', cleanStr.substring(0, 500) + '...');
+      // Убираем экранирование и парсим JSON
+      let cleanStr = course.parts;
       
+      // Убираем внешние кавычки если они есть
+      if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
+        cleanStr = cleanStr.slice(1, -1);
+      }
+      
+      // Заменяем экранированные кавычки
+      cleanStr = cleanStr.replace(/\\"/g, '"');
+      
+      // Парсим JSON
+      console.log(cleanStr)
       partsData = JSON.parse(cleanStr);
+      console.log(partsData)
     } else {
       partsData = course.parts;
     }
   } catch (parseError) {
-    console.error('Parse error in generateCurriculum:', parseError);
-    console.log('Raw parts that caused error:', course.parts);
-    
-    // Попробуем альтернативные методы парсинга
-    try {
-      partsData = tryAlternativeParse(course.parts);
-    } catch (secondError) {
-      console.error('All parse attempts failed:', secondError);
-      return [{
-        id: 'error-module',
-        title: 'Программа курса',
-        lessons: [{
-          id: 'error-lesson',
-          title: 'Ошибка загрузки программы курса',
-          content: '',
-          images: []
-        }]
-      }];
-    }
+    console.error('Parse error:', parseError);
+    return [{
+      id: 'error-module',
+      title: 'Программа курса',
+      lessons: [{
+        id: 'error-lesson',
+        title: 'Ошибка загрузки программы курса',
+        content: '',
+        images: []
+      }]
+    }];
   }
 
   if (!Array.isArray(partsData)) {
-    console.warn('Course parts is not an array:', partsData);
     return [{
       id: 'empty-module',
       title: 'Программа курса',
@@ -558,128 +536,25 @@ function generateCurriculum(course) {
     }];
   }
 
-  // Простое преобразование данных в единый формат
-  return partsData.map((module, index) => {
-    if (!module) {
-      return {
-        id: `module-${index}`,
-        title: 'Модуль без названия',
-        lessons: []
-      };
-    }
-
-    return {
-      id: module.id || `module-${index}`,
-      title: module.title || 'Модуль без названия',
-      lessons: Array.isArray(module.lessons) 
-        ? module.lessons.map((lesson, lessonIndex) => {
-            if (!lesson) {
-              return {
-                id: `lesson-${index}-${lessonIndex}`,
-                title: 'Лекция без названия',
-                content: '',
-                images: [],
-                duration: '15 минут'
-              };
-            }
-
-            return {
-              id: lesson.id || `lesson-${index}-${lessonIndex}`,
-              title: lesson.title || 'Лекция без названия',
-              content: lesson.content || '',
-              images: Array.isArray(lesson.images) ? lesson.images : [],
-              duration: lesson.duration || '15 минут'
-            };
-          })
-        : []
-    };
-  });
-}
-
-// Функция для очистки JSON строки
-function cleanJSONString(str) {
-  if (typeof str !== 'string') return str;
-  
-  let cleaned = str
-    // Убираем внешние кавычки если они есть
-    .replace(/^"(.*)"$/, '$1')
-    // Экранируем специальные символы JSON
-    .replace(/\\"/g, '"')
-    .replace(/\\\\/g, '\\')
-    .replace(/\\n/g, '\n')
-    .replace(/\\t/g, '\t')
-    .replace(/\\r/g, '\r')
-    // Убираем лишние обратные слеши
-    .replace(/([^\\])\\"/g, '$1"')
-    // Исправляем незакрытые кавычки
-    .replace(/"\s*([^"{}\[\],:]+?)\s*"/g, '"$1"')
-    // Убираем непечатаемые символы
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
-  
-  return cleaned;
-}
-
-// Альтернативный метод парсинга для проблемных JSON
-function tryAlternativeParse(str) {
-  if (typeof str !== 'string') return str;
-  
-  try {
-    // Попытка 1: Прямой парсинг
-    return JSON.parse(str);
-  } catch (e1) {
-    console.log('First parse attempt failed, trying alternatives...');
-    
-    try {
-      // Попытка 2: Очистка и повторный парсинг
-      let cleaned = cleanJSONString(str);
-      return JSON.parse(cleaned);
-    } catch (e2) {
-      console.log('Second parse attempt failed');
-      
-      try {
-        // Попытка 3: Ручное извлечение данных с помощью регулярных выражений
-        return parseWithRegex(str);
-      } catch (e3) {
-        console.log('Regex parse failed');
-        throw new Error('All parse methods failed');
-      }
-    }
-  }
-}
-
-// Парсинг с помощью регулярных выражений для крайних случаев
-function parseWithRegex(str) {
-  const moduleRegex = /\{"id":(\d+),"title":"([^"]+)","lessons":(\[[\s\S]*?\])\}/g;
-  const lessonRegex = /\{"id":(\d+),"title":"([^"]+)","content":"([\s\S]*?)","images":(\[[\s\S]*?\])\}/g;
-  
-  let modules = [];
-  let match;
-  
-  while ((match = moduleRegex.exec(str)) !== null) {
-    const [, id, title, lessonsStr] = match;
-    const lessons = [];
-    
-    let lessonMatch;
-    const lessonPattern = /\{"id":(\d+),"title":"([^"]+)","content":"([\s\S]*?)","images":(\[[\s\S]*?\])\}/g;
-    
-    while ((lessonMatch = lessonPattern.exec(lessonsStr)) !== null) {
-      const [, lessonId, lessonTitle, lessonContent, imagesStr] = lessonMatch;
-      lessons.push({
-        id: parseInt(lessonId),
-        title: lessonTitle,
-        content: lessonContent.replace(/\\n/g, '\n').replace(/\\"/g, '"'),
-        images: imagesStr === '[]' ? [] : JSON.parse(imagesStr)
-      });
-    }
-    
-    modules.push({
-      id: parseInt(id),
-      title: title,
-      lessons: lessons
-    });
-  }
-  
-  return modules;
+  // Преобразуем данные в единый формат
+  return partsData.map((module, index) => ({
+    id: module.id || `module-${index}`,
+    title: module.title || 'Модуль без названия',
+    lessons: Array.isArray(module.lessons) 
+      ? module.lessons.map((lesson, lessonIndex) => ({
+          id: lesson.id || `lesson-${index}-${lessonIndex}`,
+          title: lesson.title || 'Лекция без названия',
+          content: lesson.content || '',
+          images: lesson.images || [],
+          duration: lesson.duration || '15 минут'
+        }))
+      : [{
+          id: `empty-lesson-${index}`,
+          title: 'Содержание модуля будет добавлено позже',
+          content: '',
+          images: []
+        }]
+  }));
 }
 
 function getInstructorBio(category) {
