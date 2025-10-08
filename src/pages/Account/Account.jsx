@@ -60,6 +60,7 @@ function Account() {
     console.log(courseProgress)
     console.log(myCourse)
     console.log(myCourses)
+    console.log(myProgress)
     try {
       if (course.parts) {
         const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
