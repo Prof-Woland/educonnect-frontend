@@ -98,6 +98,9 @@ function Courses() {
               <option value="all">Все направления</option>
               <option value="programming">Программирование</option>
               <option value="design">Дизайн</option>
+              <option value="marketing">Маркетинг</option>
+              <option value="business">Бизнес</option>
+              <option value="languages">Языки</option>
             </select>
             <select onChange={handleSortChange} value={sortBy}>
               <option value="popularity-desc">Популярность (убыв.)</option>

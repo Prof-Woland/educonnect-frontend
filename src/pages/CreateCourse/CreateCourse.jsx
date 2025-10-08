@@ -6,6 +6,9 @@ import './CreateCourse.css';
 
 const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
+// Регулярное выражение для проверки формата продолжительности
+const durationRegex = /^\s*(\d+)\s+(день|дня|дней|неделя|недели|недель|месяц|месяца|месяцев|год|года|лет)\s*$/i;
+
 function CreateCourse() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -37,6 +40,13 @@ function CreateCourse() {
     detailDescription: '',
     teacher: user?.email || '' 
   });
+
+  // Проверка формата продолжительности
+  const validateDuration = (duration) => {
+    if (!duration.trim()) return true; // Пустое поле - допустимо
+    return durationRegex.test(duration);
+  };
+
   if (!isAuthorized) {
     return (
       <div className="create-course">
@@ -56,6 +66,16 @@ function CreateCourse() {
   // Обработчики изменений основных полей
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    if (name === 'time') {
+      // Проверяем формат при вводе
+      if (!validateDuration(value) && value.trim() !== '') {
+        setError('Формат продолжительности: число + день/дня/дней, неделя/недели/недель, месяц/месяца/месяцев, год/года/лет');
+      } else {
+        setError('');
+      }
+    }
+    
     setCourseData(prev => ({
       ...prev,
       [name]: value
@@ -165,6 +185,12 @@ function CreateCourse() {
 
     if (modules.length === 0) {
       setError('Добавьте хотя бы один модуль');
+      return;
+    }
+
+    // Финальная проверка формата продолжительности перед отправкой
+    if (courseData.time.trim() && !validateDuration(courseData.time)) {
+      setError('Формат продолжительности: число + день/дня/дней, неделя/недели/недель, месяц/месяца/месяцев, год/года/лет');
       return;
     }
 
@@ -278,7 +304,11 @@ function CreateCourse() {
                   value={courseData.time}
                   onChange={handleInputChange}
                   placeholder="4 недели"
+                  className={courseData.time && !validateDuration(courseData.time) ? 'input-error' : ''}
                 />
+                <small className="input-hint">
+                  Формат: число + единица времени (например: "5 дней", "2 недели", "3 месяца", "1 год")
+                </small>
               </div>
             </div>
 

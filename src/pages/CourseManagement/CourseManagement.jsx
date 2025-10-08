@@ -104,29 +104,6 @@ const CourseManagementPage = () => {
 
   const getStatusActions = (course) => {
     switch (course.status) {
-      case 'moderating':
-        return (
-          <div className="course-actions-adm">
-            <button 
-              className="btn-approve-adm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleApproveCourse(course.id);
-              }}
-            >
-              Одобрить
-            </button>
-            <button 
-              className="btn-reject-adm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRejectCourse(course.id);
-              }}
-            >
-              Отклонить
-            </button>
-          </div>
-        );
       case 'approved':
         return (
           <div className="course-actions-adm">
