@@ -57,11 +57,10 @@ function Account() {
     // Получаем общее количество уроков в курсе
     // Предполагаем, что в course.parts хранится структура модулей и уроков
     let totalLessons = 0;
-    console.log('cp ' + courseProgress)
+    console.log(courseProgress)
     try {
       if (course.parts) {
         const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
-        totalLessons = parts.reduce((total, module) => total + (module.lessons ? module.lessons.length : 0), 0);
         totalLessons = myCourse.lessons
         console.log(lessons)
       }
