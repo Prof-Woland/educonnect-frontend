@@ -16,7 +16,7 @@ function Account() {
   const navigate = useNavigate()
   const { currentUser, loading } = auth;
   const [myCourses, setMyCourses] = useState([])
-  const [myCompleted, setMyCompleted] = useState([])
+  const [myProgress, setMyProgress] = useState([])
   const [userData, setUserData] = useState('')
   const user = JSON.parse(Cookies.get('user'));
 
@@ -39,12 +39,40 @@ function Account() {
         });
       }
       const data = await getOwn();
-      setMyCourses(data.courses)
-      setMyCompleted(data.completed)
+      setMyCourses(data.courses || [])
+      setMyProgress(data.progress || [])
     }
     
     fetchData();
   }, [currentUser]);
+
+  // Функция для расчета прогресса курса
+  const calculateCourseProgress = (course) => {
+    // Находим прогресс для этого курса
+    const courseProgress = myProgress.find(p => p.courseId === course.id);
+    
+    if (!courseProgress) return 0;
+
+    // Получаем общее количество уроков в курсе
+    // Предполагаем, что в course.parts хранится структура модулей и уроков
+    let totalLessons = 0;
+    
+    try {
+      if (course.parts) {
+        const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
+        totalLessons = parts.reduce((total, module) => total + (module.lessons ? module.lessons.length : 0), 0);
+      }
+    } catch (error) {
+      console.error('Error parsing course parts:', error);
+    }
+
+    // Если нет уроков в курсе или нет прогресса, возвращаем 0
+    if (totalLessons === 0 || !courseProgress.lessons) return 0;
+
+    // Рассчитываем процент выполнения
+    const progressPercent = (courseProgress.lessons / totalLessons) * 100;
+    return Math.min(progressPercent, 100); // Ограничиваем максимум 100%
+  };
 
   let role
   let isAdmin = false
@@ -178,16 +206,31 @@ function Account() {
           {myCourses && myCourses.length > 0 ? (
             <div className="courses-grid">
               {myCourses.map(function(course) {
+                const progress = calculateCourseProgress(course);
+                const courseProgressData = myProgress.find(p => p.courseId === course.id);
+                
                 return (
                   <div key={course.id} className="course-card">
                     <h3>{course.name}</h3>
+                    <p className="course-description">{course.description}</p>
                     <div className="progress-bar">
                       <div 
                         className="progress-fill" 
-                        style={{ width: `${course.progress || 0}%` }}
+                        style={{ width: `${progress}%` }}
                       ></div>
                     </div>
-                    <span>{course.progress || 0}% завершено</span>
+                    <div className="progress-info">
+                      <span>{Math.round(progress)}% завершено</span>
+                      {courseProgressData && (
+                        <span className="lessons-completed">
+                          Пройдено уроков: {courseProgressData.lessons || 0}
+                        </span>
+                      )}
+                    </div>
+                    <div className="course-meta">
+                      <span className="course-duration">{course.time}</span>
+                      <span className="course-level">{course.level}</span>
+                    </div>
                   </div>
                 );
               })}
@@ -203,7 +246,7 @@ function Account() {
 
 async function getOwn(){
   const token = JSON.parse(Cookies.get('token'));
-  const user = JSON.parse(Cookies.get('user')); // Добавляем получение user
+  const user = JSON.parse(Cookies.get('user'));
   
   try {
     const response = await fetch(`${API_BASE_URL}/courses/own`, {
@@ -217,7 +260,7 @@ async function getOwn(){
     
     if (!response.ok) {
       if(response.status == 401){
-        await refresh(user.id); // Используем user.id
+        await refresh(user.id);
       }
       const errorData = await response.json();
       if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
@@ -233,14 +276,13 @@ async function getOwn(){
     }
     
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     
-    if (!Array.isArray(data)) {
-      console.warn('API returned non-array data:', data);
-      return [];
-    }
-    Cookies.set('ownCourses', JSON.stringify(data), {expires: 0.5})
-    return data;
+    // Возвращаем объект с courses и progress
+    return {
+      courses: data.courses || [],
+      progress: data.progress || []
+    };
   } catch (error) {
     console.error('Error fetching own courses:', error);
     throw error;
