@@ -183,7 +183,6 @@ export const adminAPI = {
                  }
                  throw new Error(errorData.message);
                }
-          navigate('/admin'); // Возвращаемся к списку курсов
         } catch (error) {
           console.error('Error unpublishing course:', error);
           window.alert(`Ошибка при снятии курса с публикации: ${error.message}`);
