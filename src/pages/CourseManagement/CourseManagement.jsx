@@ -116,7 +116,7 @@ const CourseManagementPage = () => {
             >
               Опубликовать
             </button>
-            <button 
+            {/* <button 
               className="btn-reject-adm"
               onClick={(e) => {
                 e.stopPropagation();
@@ -124,7 +124,7 @@ const CourseManagementPage = () => {
               }}
             >
               Отклонить
-            </button>
+            </button> */}
           </div>
         );
       case 'rejected':
