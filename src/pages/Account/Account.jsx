@@ -50,17 +50,20 @@ function Account() {
   const calculateCourseProgress = (course) => {
     // Находим прогресс для этого курса
     const courseProgress = myProgress.find(p => p.courseId === course.id);
+    const myCourse = myCourses.find(p => p.courseId === course.id)
     
     if (!courseProgress) return 0;
 
     // Получаем общее количество уроков в курсе
     // Предполагаем, что в course.parts хранится структура модулей и уроков
     let totalLessons = 0;
-    
+    console.log('cp ' + courseProgress)
     try {
       if (course.parts) {
         const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
         totalLessons = parts.reduce((total, module) => total + (module.lessons ? module.lessons.length : 0), 0);
+        totalLessons = myCourse.lessons
+        console.log(lessons)
       }
     } catch (error) {
       console.error('Error parsing course parts:', error);
