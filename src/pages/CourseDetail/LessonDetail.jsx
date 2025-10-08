@@ -236,7 +236,7 @@ function LessonDetail() {
 
   const handleCompleteLesson = () => {
     setCompleted(true);
-    addCompete(courseId)
+    handleComplete(courseId)
     console.log(`Лекция ${lesson.title} отмечена как пройденная`);
   };
 
