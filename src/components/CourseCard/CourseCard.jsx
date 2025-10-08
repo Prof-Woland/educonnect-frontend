@@ -5,7 +5,7 @@ import './CourseCard.css';
 import {refresh} from '../../context/AuthContext'
 import Cookies from 'js-cookie';
 
-const API_URI = 'https://educonnect-backend-qrh6.onrender.com';
+const API_URI = 'http://localhost:3000';
 
 function CourseCard(props) {
   const navigate = useNavigate();

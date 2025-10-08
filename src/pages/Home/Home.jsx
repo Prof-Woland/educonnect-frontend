@@ -5,7 +5,8 @@ import Cookies from 'js-cookie';
 import CourseCard from '../../components/CourseCard/CourseCard'
 import {refresh} from '../../context/AuthContext'
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
+
 const Home = () => {
   const [popularCourses, setPopularCourses] = useState([]);
   const [userCourses, setUserCourses] = useState([]);

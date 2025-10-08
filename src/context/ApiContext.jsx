@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { refresh } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 // Users API
 export const adminAPI = {

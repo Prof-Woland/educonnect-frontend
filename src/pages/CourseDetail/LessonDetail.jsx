@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './CourseDetail.css';
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 const handleComplete = async (id) => {
     try {
@@ -454,6 +454,7 @@ async function getCourse(id) {
 }
 
 function generateCurriculum(course) {
+  console.log('Course parts:', course.parts);
   
   if (!course.parts) {
     return [{
@@ -472,13 +473,39 @@ function generateCurriculum(course) {
 
   try {
     if (typeof course.parts === 'string') {
+      // Убираем экранирование и парсим JSON
       let cleanStr = course.parts;
       
+      // Убираем внешние кавычки если они есть
       if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
         cleanStr = cleanStr.slice(1, -1);
       }
       
-      cleanStr = cleanStr.replace(/\\"/g, '"');
+      // Заменяем экранированные кавычки
+      // let clean = text.replace(/\\"/g, '"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\n\n', '');
+      cleanStr = cleanStr.replaceAll(/\\n/g, '');
+      cleanStr = cleanStr.replaceAll('\\\\', ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\[0-9]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/ \\[0-9]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\ /g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[.,; ]\\[.,; ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/\;\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[.,; ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[a-zA-Z]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\[a-zA-Z]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\ /g, ' ');
+      cleanStr = cleanStr.replaceAll(/ \\ /g, ' ');
+
+      console.log(cleanStr)
+
+      // console.log(clean)
       partsData = JSON.parse(cleanStr);
     } else {
       partsData = course.parts;
@@ -510,6 +537,7 @@ function generateCurriculum(course) {
     }];
   }
 
+  // Преобразуем данные в единый формат
   return partsData.map((module, index) => ({
     id: module.id || `module-${index}`,
     title: module.title || 'Модуль без названия',

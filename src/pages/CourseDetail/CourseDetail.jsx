@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { refresh } from '../../context/AuthContext'
 import { useAuth } from '../../context/AuthContext';
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 function CourseDetail(props) {
   const { id } = useParams();
@@ -309,7 +309,7 @@ function CourseDetail(props) {
   return (
     <div className="course-detail">
       <div className="container">
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => navigate('/courses')} className="back-button">
           ← Назад
         </button>
         
@@ -411,7 +411,7 @@ function CourseDetail(props) {
                           handleLessonClick(lesson.id || `lesson-${index}-${lessonIndex}`, index, lessonIndex);
                         }}
                       >
-                        {lesson.title}
+                        <div>{lesson.title}</div>
                         {!isEnrolled && <span className="lesson-lock"> 🔒</span>}
                       </li>
                     ))}
@@ -500,14 +500,31 @@ function generateCurriculum(course) {
       }
       
       // Заменяем экранированные кавычки
-      cleanStr = cleanStr.replace(/\\"/g, '"');
-      
-      // Парсим JSON
-      console.log('clean')
+      // let clean = text.replace(/\\"/g, '"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\n\n', '');
+      cleanStr = cleanStr.replaceAll(/\\n/g, '');
+      cleanStr = cleanStr.replaceAll('\\\\', ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\[0-9]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/ \\[0-9]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\ /g, ' ');
+      cleanStr = cleanStr.replaceAll(/[0-9]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[.,; ]\\[.,; ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/\;\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[.,; ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[a-zA-Z]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\[a-zA-Z]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\ /g, ' ');
+      cleanStr = cleanStr.replaceAll(/ \\ /g, ' ');
+
       console.log(cleanStr)
+
+      // console.log(clean)
       partsData = JSON.parse(cleanStr);
-      console.log('parts')
-      console.log(partsData)
     } else {
       partsData = course.parts;
     }

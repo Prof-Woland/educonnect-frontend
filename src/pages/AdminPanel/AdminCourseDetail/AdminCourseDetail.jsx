@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import './AdminCourseDetail.css';
 import { refresh } from '../../../context/AuthContext';
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 function AdminCourseDetail() {
   const { id } = useParams();
@@ -733,7 +733,7 @@ async function getOne(id, token) {
 
 // Улучшенная функция для парсинга учебного плана
 function generateCurriculum(course) {
-  console.log('Raw course.parts:', course.parts);
+  console.log('Course parts:', course.parts);
   
   if (!course.parts) {
     return [{
@@ -752,13 +752,29 @@ function generateCurriculum(course) {
 
   try {
     if (typeof course.parts === 'string') {
+      // Убираем экранирование и парсим JSON
       let cleanStr = course.parts;
       
+      // Убираем внешние кавычки если они есть
       if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
         cleanStr = cleanStr.slice(1, -1);
       }
       
-      cleanStr = cleanStr.replace(/\\"/g, '"');
+      // Заменяем экранированные кавычки
+      // let clean = text.replace(/\\"/g, '"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\\"', '\"');
+      cleanStr = cleanStr.replaceAll('\n\n', '');
+      cleanStr = cleanStr.replaceAll(/\\n/g, '');
+      cleanStr = cleanStr.replaceAll('\\\\', ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/.\\[а-яёА-ЯЁ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[.,; ]\\[.,; ]/g, ' ');
+      cleanStr = cleanStr.replaceAll(/\;\\./g, ' ');
+      cleanStr = cleanStr.replaceAll(/[а-яёА-ЯЁ]\\[.,; ]/g, ' ');
+
+      // console.log(clean)
       partsData = JSON.parse(cleanStr);
     } else {
       partsData = course.parts;
@@ -790,6 +806,7 @@ function generateCurriculum(course) {
     }];
   }
 
+  // Преобразуем данные в единый формат
   return partsData.map((module, index) => ({
     id: module.id || `module-${index}`,
     title: module.title || 'Модуль без названия',

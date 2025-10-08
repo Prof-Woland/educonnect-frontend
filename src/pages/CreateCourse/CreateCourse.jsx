@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './CreateCourse.css';
 
-const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 // Регулярное выражение для проверки формата продолжительности
 const durationRegex = /^\s*(\d+)\s+(день|дня|дней|неделя|недели|недель|месяц|месяца|месяцев|год|года|лет)\s*$/i;
