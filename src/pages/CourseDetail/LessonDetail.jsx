@@ -9,7 +9,7 @@ const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 const handleComplete = async (id) => {
     try {
       const token = JSON.parse(Cookies.get('token') || '{}');
-      const response = await fetch(`${API_URI}/courses/complete/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/courses/complete/${id}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
