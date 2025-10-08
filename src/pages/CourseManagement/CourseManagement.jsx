@@ -134,10 +134,10 @@ const CourseManagementPage = () => {
               className="btn-approve-adm"
               onClick={(e) => {
                 e.stopPropagation();
-                handleApproveCourse(course.id);
+                handleModerCourse(course.id);
               }}
             >
-              Одобрить
+              На модерацию
             </button>
             <button 
               className="btn-delete-adm"
@@ -188,6 +188,19 @@ const CourseManagementPage = () => {
     } catch (error) {
       console.error('Error approving course:', error);
       alert('Ошибка при одобрении курса');
+    }
+  };
+
+  const handleModerCourse = async (courseId) => {
+    if (!window.confirm('Вы уверены, что хотите отправить этот курс на модерацию?')) return;
+
+    try {
+      await adminAPI.moderCourse(courseId);
+      alert('Курс успешно отправлен на модерацию');
+      loadCourses(); // Перезагружаем список
+    } catch (error) {
+      console.error('Error moderating course:', error);
+      alert('Ошибка при отправлении курса на модерацию');
     }
   };
 

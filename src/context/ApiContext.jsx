@@ -189,6 +189,42 @@ export const adminAPI = {
         }
   },
 
+  moderCourse: async (courseId) => {
+        try {
+          const token = JSON.parse(Cookies.get('token') || '{}');
+          const response = await fetch(`${API_BASE_URL}/admin/pending/approve/${courseId}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token.accessToken}`
+            },
+            body:JSON.stringify({
+              status:'moderating'
+            })
+          });
+    
+         if (!response.ok) {
+                 if(response.status == 401){
+                   await refresh(user.id); // Используем user вместо userData
+                 }
+                 const errorData = await response.json();
+                 if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
+                   ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
+                   ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
+                   ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
+                   ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
+                   Cookies.remove('user');
+                   Cookies.remove('token');
+                 }
+                 throw new Error(errorData.message);
+               }
+        } catch (error) {
+          console.error('Error unpublishing course:', error);
+          window.alert(`Ошибка при снятии курса с публикации: ${error.message}`);
+        }
+  },
+
   moderateCourse: async (courseId, action, feedback = '') => {
     let token, user
     try{
