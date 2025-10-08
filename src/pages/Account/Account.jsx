@@ -58,6 +58,7 @@ function Account() {
     // Предполагаем, что в course.parts хранится структура модулей и уроков
     let totalLessons = 0;
     console.log(courseProgress)
+    console.log(myCourse)
     try {
       if (course.parts) {
         const parts = typeof course.parts === 'string' ? JSON.parse(course.parts) : course.parts;
