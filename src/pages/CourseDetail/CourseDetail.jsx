@@ -503,8 +503,10 @@ function generateCurriculum(course) {
       cleanStr = cleanStr.replace(/\\"/g, '"');
       
       // Парсим JSON
+      console.log('clean')
       console.log(cleanStr)
       partsData = JSON.parse(cleanStr);
+      console.log('parts')
       console.log(partsData)
     } else {
       partsData = course.parts;
