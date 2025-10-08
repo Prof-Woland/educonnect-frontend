@@ -5,6 +5,42 @@ import './CourseDetail.css';
 
 const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
+const handleComplete = async (id) => {
+    try {
+      const token = JSON.parse(Cookies.get('token') || '{}');
+      const response = await fetch(`${API_URI}/courses/complete/${id}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token.accessToken}`
+        },
+      });
+
+     if (!response.ok) {
+             if(response.status == 409){
+               window.alert(`Вы уже записались на этот курс!`);
+             }
+             if(response.status == 401){
+               await refresh(user.id); // Используем user вместо userData
+             }
+             const errorData = await response.json();
+             if(response.status == 403 && (errorData.message == 'Неверный ключ токена обновления'||errorData.message == 'Скомпрометированный токен доступа'
+               ||errorData.message == 'Устаревший токен обновления'||errorData.message == 'Неверный ключ токена обновления'
+               ||errorData.message == 'Невалидный токен обновления'||errorData.message == 'Скомпрометированный токен обновления'
+               ||errorData.message=='Не удалось получить токен доступа из кэша. Токен скомпрометирован'
+               ||errorData.message=='Не удалось получить токен обновления из кэша. Токен скомпрометирован')){
+               Cookies.remove('user');
+               Cookies.remove('token');
+             }
+             throw new Error(errorData.message);
+           }
+    } catch (error) {
+      console.error('Error approving course:', error);
+      window.alert(`Ошибка при одобрении курса: ${error.message}`);
+    }
+  };
+
 function LessonDetail() {
   const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
@@ -200,10 +236,11 @@ function LessonDetail() {
 
   const handleCompleteLesson = () => {
     setCompleted(true);
-    // Здесь можно добавить API вызов для сохранения прогресса
+    addCompete(courseId)
     console.log(`Лекция ${lesson.title} отмечена как пройденная`);
   };
 
+ 
   // Функция для форматирования контента лекции
   const renderLessonContent = (content) => {
     if (!content) {
@@ -491,5 +528,7 @@ function generateCurriculum(course) {
         }]
   }));
 }
+
+ 
 
 export default LessonDetail;
