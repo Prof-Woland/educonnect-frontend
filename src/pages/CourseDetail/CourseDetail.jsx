@@ -470,7 +470,7 @@ async function getOne(id){
   }
 }
 
-// Обновленная функция для парсинга вашего формата данных
+// Улучшенная функция для парсинга вашего формата данных с валидацией JSON
 function generateCurriculum(course) {
   console.log('Course parts:', course.parts);
   
@@ -491,37 +491,36 @@ function generateCurriculum(course) {
 
   try {
     if (typeof course.parts === 'string') {
-      // Убираем экранирование и парсим JSON
-      let cleanStr = course.parts;
-      
-      // Убираем внешние кавычки если они есть
-      if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
-        cleanStr = cleanStr.slice(1, -1);
+      // Валидация JSON перед парсингом
+      const validationResult = validateAndParseJSON(course.parts);
+      if (validationResult.isValid) {
+        partsData = validationResult.data;
+      } else {
+        console.error('Invalid JSON in course parts:', validationResult.error);
+        console.log('Raw parts string:', course.parts);
+        throw new Error(`Invalid JSON format: ${validationResult.error}`);
       }
-      
-      // Заменяем экранированные кавычки
-      cleanStr = cleanStr.replace(/\\"/g, '"');
-      
-      // Парсим JSON
-      partsData = JSON.parse(cleanStr);
     } else {
-      partsData = course.parts;
+      // Если parts уже объект, проверяем его структуру
+      partsData = validateCoursePartsStructure(course.parts);
     }
   } catch (parseError) {
-    console.error('Parse error:', parseError);
+    console.error('Parse error in generateCurriculum:', parseError);
+    console.log('Course that caused error:', course);
     return [{
       id: 'error-module',
       title: 'Программа курса',
       lessons: [{
         id: 'error-lesson',
         title: 'Ошибка загрузки программы курса',
-        content: '',
+        content: 'Не удалось загрузить структуру курса. Пожалуйста, обратитесь к администратору.',
         images: []
       }]
     }];
   }
 
   if (!Array.isArray(partsData)) {
+    console.warn('Course parts is not an array:', partsData);
     return [{
       id: 'empty-module',
       title: 'Программа курса',
@@ -534,25 +533,157 @@ function generateCurriculum(course) {
     }];
   }
 
-  // Преобразуем данные в единый формат
-  return partsData.map((module, index) => ({
-    id: module.id || `module-${index}`,
-    title: module.title || 'Модуль без названия',
-    lessons: Array.isArray(module.lessons) 
-      ? module.lessons.map((lesson, lessonIndex) => ({
-          id: lesson.id || `lesson-${index}-${lessonIndex}`,
-          title: lesson.title || 'Лекция без названия',
-          content: lesson.content || '',
-          images: lesson.images || [],
-          duration: lesson.duration || '15 минут'
-        }))
-      : [{
-          id: `empty-lesson-${index}`,
-          title: 'Содержание модуля будет добавлено позже',
-          content: '',
-          images: []
-        }]
-  }));
+  // Преобразуем данные в единый формат с дополнительной валидацией
+  return partsData.map((module, index) => {
+    // Валидация структуры модуля
+    const validatedModule = validateModuleStructure(module, index);
+    
+    return {
+      id: validatedModule.id || `module-${index}`,
+      title: validatedModule.title || 'Модуль без названия',
+      lessons: Array.isArray(validatedModule.lessons) 
+        ? validatedModule.lessons.map((lesson, lessonIndex) => {
+            // Валидация структуры урока
+            const validatedLesson = validateLessonStructure(lesson, lessonIndex);
+            return {
+              id: validatedLesson.id || `lesson-${index}-${lessonIndex}`,
+              title: validatedLesson.title || 'Лекция без названия',
+              content: validatedLesson.content || '',
+              images: Array.isArray(validatedLesson.images) ? validatedLesson.images : [],
+              duration: validatedLesson.duration || '15 минут'
+            };
+          })
+        : [{
+            id: `empty-lesson-${index}`,
+            title: 'Содержание модуля будет добавлено позже',
+            content: '',
+            images: []
+          }]
+    };
+  });
+}
+
+// Функция для валидации и парсинга JSON с улучшенной обработкой ошибок
+function validateAndParseJSON(jsonString) {
+  try {
+    // Первая попытка - прямой парсинг
+    const parsed = JSON.parse(jsonString);
+    return { isValid: true, data: parsed };
+  } catch (firstError) {
+    console.log('First parse attempt failed, trying to clean JSON...');
+    
+    try {
+      // Вторая попытка - очистка JSON
+      let cleanStr = jsonString.trim();
+      
+      // Убираем внешние кавычки если они есть и если это строка в кавычках
+      if (cleanStr.startsWith('"') && cleanStr.endsWith('"')) {
+        cleanStr = cleanStr.slice(1, -1);
+      }
+      
+      // Заменяем экранированные кавычки и символы
+      cleanStr = cleanStr
+        .replace(/\\"/g, '"')
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, '\t')
+        .replace(/\\r/g, '\r')
+        .replace(/\\\\/g, '\\');
+      
+      // Пробуем распарсить очищенную строку
+      const parsed = JSON.parse(cleanStr);
+      return { isValid: true, data: parsed };
+    } catch (secondError) {
+      console.log('Second parse attempt failed:', secondError);
+      
+      // Третья попытка - попробовать найти и исправить распространенные ошибки
+      try {
+        const fixedJson = fixCommonJSONErrors(jsonString);
+        const parsed = JSON.parse(fixedJson);
+        return { isValid: true, data: parsed };
+      } catch (thirdError) {
+        return { 
+          isValid: false, 
+          error: `JSON parsing failed: ${thirdError.message}`,
+          originalError: firstError.message
+        };
+      }
+    }
+  }
+}
+
+// Функция для исправления распространенных ошибок в JSON
+function fixCommonJSONErrors(jsonString) {
+  let fixed = jsonString;
+  
+  // Исправление незакрытых кавычек
+  fixed = fixed.replace(/([^\\])"/g, '$1\"');
+  
+  // Исправление незакрытых объектов и массивов
+  const openBraces = (fixed.match(/{/g) || []).length;
+  const closeBraces = (fixed.match(/}/g) || []).length;
+  const openBrackets = (fixed.match(/\[/g) || []).length;
+  const closeBrackets = (fixed.match(/\]/g) || []).length;
+  
+  // Добавляем недостающие закрывающие скобки
+  if (openBraces > closeBraces) {
+    fixed += '}'.repeat(openBraces - closeBraces);
+  }
+  if (openBrackets > closeBrackets) {
+    fixed += ']'.repeat(openBrackets - closeBrackets);
+  }
+  
+  // Исправление trailing commas
+  fixed = fixed.replace(/,\s*([}\]])/g, '$1');
+  
+  // Исправление отсутствующих запятых между свойствами
+  fixed = fixed.replace(/"\s*"([^"])/g, '","$1');
+  
+  return fixed;
+}
+
+// Функция для валидации структуры course parts
+function validateCoursePartsStructure(parts) {
+  if (Array.isArray(parts)) {
+    return parts;
+  }
+  
+  if (typeof parts === 'object' && parts !== null) {
+    // Если это единичный модуль, оборачиваем в массив
+    return [parts];
+  }
+  
+  console.warn('Unexpected course parts structure:', parts);
+  return [];
+}
+
+// Функция для валидации структуры модуля
+function validateModuleStructure(module, index) {
+  if (!module || typeof module !== 'object') {
+    console.warn(`Invalid module structure at index ${index}:`, module);
+    return { id: `module-${index}`, title: 'Невалидный модуль', lessons: [] };
+  }
+  
+  return {
+    id: typeof module.id === 'string' ? module.id : `module-${index}`,
+    title: typeof module.title === 'string' ? module.title : 'Модуль без названия',
+    lessons: Array.isArray(module.lessons) ? module.lessons : []
+  };
+}
+
+// Функция для валидации структуры урока
+function validateLessonStructure(lesson, index) {
+  if (!lesson || typeof lesson !== 'object') {
+    console.warn(`Invalid lesson structure at index ${index}:`, lesson);
+    return { id: `lesson-${index}`, title: 'Невалидный урок', content: '', images: [] };
+  }
+  
+  return {
+    id: typeof lesson.id === 'string' ? lesson.id : `lesson-${index}`,
+    title: typeof lesson.title === 'string' ? lesson.title : 'Урок без названия',
+    content: typeof lesson.content === 'string' ? lesson.content : '',
+    images: Array.isArray(lesson.images) ? lesson.images : [],
+    duration: typeof lesson.duration === 'string' ? lesson.duration : '15 минут'
+  };
 }
 
 function getInstructorBio(category) {
