@@ -488,7 +488,7 @@ function AdminCourseDetail() {
 
             {/* Админские действия */}
             <div className="admin-actions">
-              {course.status === 'moderating' && (
+              {(course.status === 'moderating' && isAdmin) && (
                 <>
                   <button className="btn-approve" onClick={handleApproveCourse}>
                     Одобрить курс
