@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import './AdminCourseDetail.css';
 import { refresh } from '../../../context/AuthContext';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://educonnect-backend-qrh6.onrender.com';
 
 function AdminCourseDetailPublished() {
   const { id } = useParams();
